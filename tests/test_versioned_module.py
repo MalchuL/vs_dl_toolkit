@@ -29,3 +29,7 @@ def test_versioned_module():
     module1.load_state_dict(module4.state_dict())  # Only warning is printed
     with pytest.raises(ModuleVersionMismatchError):
         module1.load_state_dict(module5.state_dict())  # Error is raised
+
+
+def test_non_versioned_module():
+    CharbonnierLoss().load_state_dict(nn.Module().state_dict(), strict=False)

@@ -41,6 +41,8 @@ class VersionedModule(nn.Module):
     __TOOLKIT_VERSION_KEY = "__toolkit_version__"
 
     def __init__(self):
+        assert semver.Version.is_valid(self.VERSION), \
+            f"Invalid version {self.VERSION} in {self.__class__.__name__}"
         super().__init__()
 
     def get_extra_state(self) -> Dict[str, Any]:
@@ -70,3 +72,6 @@ class VersionedModule(nn.Module):
                 )
             # Update version to avoid warnings in the future
             self.VERSION = state[self.__VERSION_KEY]
+
+    def extra_repr(self) -> str:
+        return f"dl_toolkit_module_version={self.VERSION}"

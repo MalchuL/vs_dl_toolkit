@@ -8,9 +8,12 @@ authors = [
 ]
 requires-python = ">=3.10"
 dependencies = [
+    "natsort>=8.4.0",
+    "pytweening>=1.2.0",
     "semver>=3.0.4",
     "torch>=2.6.0",
     "torchvision>=0.21.0",
+    "tqdm>=4.67.1",
 ]
 
 [build-system]
@@ -23,6 +26,8 @@ no-build-isolation-package = ["torch", "torchvision"]
 
 [dependency-groups]
 dev = [
+    "jupyterlab>=4.3.5",
+    "matplotlib>=3.10.0",
     "pre-commit>=4.1.0",
     "pytest>=8.3.4",
 ]
