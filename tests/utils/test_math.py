@@ -9,7 +9,6 @@ def test_logit():
     for xi, yi in zip(x, y):
         assert abs(logit(xi) - yi) < 1e-6, f"{x}: {logit(xi)} != {yi}"
 
-
     x_np, y_np = np.array(x), np.array(y)
     assert np.allclose(logit(x_np), y_np)
 

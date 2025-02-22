@@ -1,8 +1,13 @@
 import numpy as np
 import pytest
-from dl_toolkit.utils.interpolation import InterpolationMode, \
-    Interpolator, Direction, interpolate, MultiInterpolator
 
+from dl_toolkit.utils.interpolation import (
+    Direction,
+    InterpolationMode,
+    Interpolator,
+    MultiInterpolator,
+    interpolate,
+)
 from dl_toolkit.utils.logging import logger
 
 NUM_STEPS = 1000
@@ -18,7 +23,9 @@ def test_tweenings():
             if mode in [InterpolationMode.EASE_OUT_ELASTIC, InterpolationMode.EASE_OUT_BACK]:
                 assert 0.0 <= inter_value <= 1.5, f"{inter_value} is out of range for mode {mode}"
             elif mode in [InterpolationMode.EASE_IN_BOUNCE, InterpolationMode.EASE_IN_OUT_BOUNCE]:
-                assert -1e-2 <= inter_value <= 1 + 1e-2, f"{inter_value} is out of range for mode {mode}"
+                assert (
+                    -1e-2 <= inter_value <= 1 + 1e-2
+                ), f"{inter_value} is out of range for mode {mode}"
             else:
                 assert 0.0 <= inter_value <= 1.01, f"{inter_value} is out of range for mode {mode}"
 
@@ -27,11 +34,13 @@ def test_wrong_interpolators():
     with pytest.raises(ValueError):
         interpolator = Interpolator(0)  # You can't create interpolator with zero steps
     with pytest.raises(ValueError):
-        interpolator = Interpolator(100, method=InterpolationMode.EASE_IN_BOUNCE,
-                                    direction=Direction.CONSTANT_1)  # You can't create interpolator with constant direction and interpolation method other than None
+        interpolator = Interpolator(
+            100, method=InterpolationMode.EASE_IN_BOUNCE, direction=Direction.CONSTANT_1
+        )  # You can't create interpolator with constant direction and interpolation method other than None
     with pytest.raises(ValueError):
-        interpolator = Interpolator(100, method=InterpolationMode.EASE_OUT_BACK,
-                                    direction=Direction.DOWN)  # You can't create interpolator with thoose parameters
+        interpolator = Interpolator(
+            100, method=InterpolationMode.EASE_OUT_BACK, direction=Direction.DOWN
+        )  # You can't create interpolator with thoose parameters
     with pytest.raises(ValueError):
         interpolator = Interpolator(2000, method=None, direction=Direction.DOWN)
 
@@ -48,7 +57,10 @@ def test_constant_interpolator():
         assert inter_value_0 == 0.0
 
 
-@pytest.mark.parametrize("method", [InterpolationMode.LINEAR, InterpolationMode.EASE_OUT_CIRC, InterpolationMode.EASE_OUT_EXPO])
+@pytest.mark.parametrize(
+    "method",
+    [InterpolationMode.LINEAR, InterpolationMode.EASE_OUT_CIRC, InterpolationMode.EASE_OUT_EXPO],
+)
 @pytest.mark.parametrize("direction", [Direction.UP, Direction.DOWN])
 def test_interpolation_constructor(method, direction):
     steps = [-2, -1, 0, 1, 2, 3, 5, 6, 7]
@@ -69,8 +81,9 @@ def test_interpolation_constructor(method, direction):
 def test_multiple_interpolators():
     interpolator1 = Interpolator(1000, direction=Direction.UP)
     interpolator2 = Interpolator(5000, method=None, direction=Direction.CONSTANT_1)
-    interpolator3 = Interpolator(2000, method=InterpolationMode.EASE_IN_CIRC,
-                                 direction=Direction.DOWN)
+    interpolator3 = Interpolator(
+        2000, method=InterpolationMode.EASE_IN_CIRC, direction=Direction.DOWN
+    )
     interpolator = MultiInterpolator([interpolator1, interpolator2, interpolator3])
     steps = 10000
     x = list(range(steps))
@@ -81,4 +94,3 @@ def test_multiple_interpolators():
     assert 0.45 < y[500] < 0.55
     assert 0.95 < y[6500] < 0.98
     assert 0.86 < y[7000] < 0.87
-

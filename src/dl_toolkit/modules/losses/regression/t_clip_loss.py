@@ -5,7 +5,7 @@ from dl_toolkit.modules.toolkit_module import ToolkitModule
 
 
 class TClipLoss(ToolkitModule):
-    def __init__(self, min_value: float = 0, max_value: float = 1, reduction: str = 'mean'):
+    def __init__(self, min_value: float = 0, max_value: float = 1, reduction: str = "mean"):
         super().__init__()
         self.min = min_value
         self.max = max_value

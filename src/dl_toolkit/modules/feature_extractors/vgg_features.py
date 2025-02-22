@@ -5,8 +5,16 @@ from typing import List, Mapping
 
 import torch
 import torch.nn as nn
-from torchvision.models import vgg16, vgg19, vgg19_bn, VGG, WeightsEnum, VGG16_Weights, \
-    VGG19_Weights, VGG19_BN_Weights
+from torchvision.models import (
+    VGG,
+    VGG16_Weights,
+    VGG19_BN_Weights,
+    VGG19_Weights,
+    WeightsEnum,
+    vgg16,
+    vgg19,
+    vgg19_bn,
+)
 
 from dl_toolkit.modules.layers.clipper import ClipperChannelwise2D
 from dl_toolkit.modules.toolkit_module import ToolkitModule
@@ -41,11 +49,11 @@ class VGGFeatures(ToolkitModule):
     VERSION = "1.0.0"
 
     def __init__(
-            self,
-            layers: List[int],
-            network: str = "vgg16",
-            padding_type: PaddingType = PaddingType.ZEROS,
-            z_clipping: float | None = None,
+        self,
+        layers: List[int],
+        network: str = "vgg16",
+        padding_type: PaddingType = PaddingType.ZEROS,
+        z_clipping: float | None = None,
     ):
         """VGG features extractor
         :param network: VGG network name
@@ -84,12 +92,14 @@ class VGGFeatures(ToolkitModule):
     def _get_perception(self, network_name: str, layers: List[int]):
         model_config = NETWORKS_CONFIGS[network_name]
         max_layer = max(layers)
-        assert max_layer <= model_config.max_layer, ("Max layer exceeded for "
-                                                     f"network {network_name} "
-                                                     f"max {self.MAX_LAYER[network_name]}")
+        assert max_layer <= model_config.max_layer, (
+            "Max layer exceeded for "
+            f"network {network_name} "
+            f"max {self.MAX_LAYER[network_name]}"
+        )
 
         model = self._get_network(model_config)
-        perception = list(model.features)[:max_layer + 1]
+        perception = list(model.features)[: max_layer + 1]
         perception = nn.Sequential(*perception).eval()
         perception.requires_grad_(False)
         return perception
@@ -109,7 +119,6 @@ class VGGFeatures(ToolkitModule):
                     module.padding = 0
         else:
             raise ValueError(f"Unknown padding type: {padding}")
-
 
     def forward(self, x):
         """Calculates VGG features :param x: 4D images tensor.
@@ -131,10 +140,10 @@ class VGGFeatures(ToolkitModule):
 
     def extra_repr(self) -> str:
         return (
-                f"Norm: [mean: {self.mean.view(3)}, std: {self.std.view(3)}]\n"
-                + f"Layers {self.layers} {[(i, self.perception[i]) for i in self.layers]}\n"
-                + f"Z_clip {self.z_clipping}\n"
-                + f"Padding {self.padding_type}"
+            f"Norm: [mean: {self.mean.view(3)}, std: {self.std.view(3)}]\n"
+            + f"Layers {self.layers} {[(i, self.perception[i]) for i in self.layers]}\n"
+            + f"Z_clip {self.z_clipping}\n"
+            + f"Padding {self.padding_type}"
         )
 
 

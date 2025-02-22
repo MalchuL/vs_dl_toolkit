@@ -11,7 +11,7 @@ class Clipper(ToolkitModule):
     CHANNELS: Iterable[int] | None = None
 
     def __init__(self, z_score: float = _CLIP_SCORE):
-        super(Clipper, self).__init__()
+        super().__init__()
         self.z_score = z_score
 
     def forward(self, x):
@@ -35,7 +35,7 @@ class ClipperWrapper(ToolkitModule):
             clipper (clipper): Clipping module, which takes the output of the module and clips it.
                 You can use same clipper in several wrappers.
         """
-        super(ClipperWrapper, self).__init__()
+        super().__init__()
         self.module = module
         self.clipper = clipper
 

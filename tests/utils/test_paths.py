@@ -2,8 +2,10 @@ import os
 
 import pytest
 
-from dl_toolkit.utils.path_utils import iterate_files_recursively, \
-    iterate_files_with_creating_structure
+from dl_toolkit.utils.path_utils import (
+    iterate_files_recursively,
+    iterate_files_with_creating_structure,
+)
 
 
 @pytest.mark.parametrize("extensions", [None, ["CsV", ".txt"], [".csv", ".txt", ".CSV", ".TXT"]])
@@ -22,8 +24,9 @@ def test_iterate_with_out(data_dir, tmp_path, extensions):
     in_dir = os.path.join(data_dir, "structured_folder")
     out_dir = os.path.join(tmp_path, "structured_folder")
     counter = 0
-    for in_path, out_path in iterate_files_with_creating_structure(in_dir, out_dir,
-                                                                   supported_extensions=extensions):
+    for in_path, out_path in iterate_files_with_creating_structure(
+        in_dir, out_dir, supported_extensions=extensions
+    ):
         print(in_path)
         counter += 1
         with open(out_path, "w") as f:

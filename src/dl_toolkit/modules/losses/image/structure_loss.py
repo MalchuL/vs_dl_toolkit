@@ -1,10 +1,10 @@
 import torch
-from torch import nn
 import torch.nn.functional as F
+from torch import nn
 
 
 class StructureLoss(nn.Module):
-    def __init__(self, reduction='mean'):
+    def __init__(self, reduction="mean"):
         super().__init__()
         self.reduction = reduction
 

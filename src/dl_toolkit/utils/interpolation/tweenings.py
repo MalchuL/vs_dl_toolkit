@@ -8,4 +8,3 @@ def interpolate(alpha, method):
         return 1.0
     out = vars(pytweening)[method](alpha)
     return out
-

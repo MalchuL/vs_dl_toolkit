@@ -6,6 +6,7 @@ from dl_toolkit.modules.losses.classification.focal_loss import FocalLoss
 
 logging.basicConfig(level=logging.WARNING)
 
+
 def test_focal_loss():
     focal_loss = FocalLoss()
     tensor = torch.randn(2, 3, 256, 256)

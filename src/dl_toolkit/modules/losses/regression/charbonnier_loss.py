@@ -15,7 +15,7 @@ class CharbonnierLoss(ToolkitModule):
         super().__init__()
         self.reduction = reduction
         self.eps = eps
-        self._eps_square = self.eps ** 2
+        self._eps_square = self.eps**2
         self.mse = nn.MSELoss(reduction="none")
 
     def forward(self, x, y):

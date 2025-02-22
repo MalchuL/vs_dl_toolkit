@@ -5,12 +5,7 @@ from typing import List
 from natsort import natsorted
 from tqdm import tqdm
 
-IMG_EXTENSIONS = (
-    ".jpg",
-    ".jpeg",
-    ".png",
-    ".ppm",
-    ".bmp")
+IMG_EXTENSIONS = (".jpg", ".jpeg", ".png", ".ppm", ".bmp")
 
 
 def _fix_img_extensions(extensions: List[str]):
@@ -28,7 +23,7 @@ def _fix_img_extensions(extensions: List[str]):
 
 
 def iterate_files_with_creating_structure(
-        in_folder: str, out_folder: str, supported_extensions: List[str] | None = None
+    in_folder: str, out_folder: str, supported_extensions: List[str] | None = None
 ):
     """Iterates over files and returns files with the same folder structure.
 

@@ -2,12 +2,14 @@ from typing import Tuple, Union
 
 import torch
 
-from dl_toolkit.modules.losses.distribution.distribution import DiagonalGaussianDistribution
+from dl_toolkit.modules.losses.distribution.distribution import (
+    DiagonalGaussianDistribution,
+)
 from dl_toolkit.modules.toolkit_module import ToolkitModule
 
 
 class KLDivergenceLoss(ToolkitModule):
-    VERSION = '1.0.0'
+    VERSION = "1.0.0"
 
     def __init__(self, dims=(1, 2, 3)):
         """

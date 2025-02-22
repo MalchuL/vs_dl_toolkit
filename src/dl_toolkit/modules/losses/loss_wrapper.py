@@ -11,9 +11,11 @@ class LossWrapper(ToolkitModule):
     VERSION = "1.0.0"
 
     def __init__(
-            self, loss: nn.Module, weight: float = 1.0,
-            interpolator: AbstractInterpolator | None = None,
-            loss_output_ids: Iterable[int | str] = (0,)
+        self,
+        loss: nn.Module,
+        weight: float = 1.0,
+        interpolator: AbstractInterpolator | None = None,
+        loss_output_ids: Iterable[int | str] = (0,),
     ):
         """
         Loss wrapper to make it more stable and generic for training.
@@ -69,7 +71,6 @@ class LossWrapper(ToolkitModule):
             return loss_value / self.weight
         else:
             return self.zero_loss
-
 
     def reset(self):
         self.num_steps.zero_()

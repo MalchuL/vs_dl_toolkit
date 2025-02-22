@@ -2,10 +2,13 @@ import pytest
 import torch
 import torch.nn as nn
 
-
 from dl_toolkit.modules.losses.loss_wrapper import LossWrapper
-from dl_toolkit.utils.interpolation import InterpolationMode, Direction, Interpolator, \
-    MultiInterpolator
+from dl_toolkit.utils.interpolation import (
+    Direction,
+    InterpolationMode,
+    Interpolator,
+    MultiInterpolator,
+)
 
 
 # Mock Loss Modules
@@ -17,6 +20,7 @@ class MockSingleOutputLoss(nn.Module):
 class MockMultiOutputLoss(nn.Module):
     def forward(self, *args, **kwargs):
         return (torch.tensor(1.0), torch.tensor(2.0))
+
 
 class MockMultiOutputDictLoss(nn.Module):
     def forward(self, *args, **kwargs):
@@ -33,10 +37,10 @@ def single_output_loss():
 def multi_output_loss():
     return MockMultiOutputLoss()
 
+
 @pytest.fixture
 def multi_output_dict_loss():
     return MockMultiOutputDictLoss()
-
 
 
 @pytest.fixture
@@ -79,11 +83,7 @@ def test_negative_weight_disables_loss(single_output_loss):
 
 
 def test_interpolator_application(single_output_loss, linear_interpolator):
-    wrapper = LossWrapper(
-        loss=single_output_loss,
-        weight=2.0,
-        interpolator=linear_interpolator
-    )
+    wrapper = LossWrapper(loss=single_output_loss, weight=2.0, interpolator=linear_interpolator)
     wrapper.train()
 
     # Step 1
@@ -102,13 +102,8 @@ def test_interpolator_application(single_output_loss, linear_interpolator):
     assert loss_value.item() == pytest.approx(expected)
 
 
-
 def test_multi_output_scaling(multi_output_loss):
-    wrapper = LossWrapper(
-        loss=multi_output_loss,
-        weight=2.0,
-        loss_output_ids=(0, 1)
-    )
+    wrapper = LossWrapper(loss=multi_output_loss, weight=2.0, loss_output_ids=(0, 1))
     loss_values = wrapper()
 
     assert isinstance(loss_values, tuple)
@@ -117,17 +112,12 @@ def test_multi_output_scaling(multi_output_loss):
 
 
 def test_multi_output_dict_scaling(multi_output_dict_loss):
-    wrapper = LossWrapper(
-        loss=multi_output_dict_loss,
-        weight=2.0,
-        loss_output_ids=("a", "b")
-    )
+    wrapper = LossWrapper(loss=multi_output_dict_loss, weight=2.0, loss_output_ids=("a", "b"))
     loss_values = wrapper()
 
     assert isinstance(loss_values, dict)
     assert loss_values["a"].item() == pytest.approx(2.0)  # 1.0 * 2.0
     assert loss_values["b"].item() == pytest.approx(4.0)  # 2.0 * 2.0
-
 
 
 def test_denormalization(single_output_loss):
@@ -138,22 +128,14 @@ def test_denormalization(single_output_loss):
 
 
 def test_extra_repr(single_output_loss, linear_interpolator):
-    wrapper = LossWrapper(
-        loss=single_output_loss,
-        weight=2.0,
-        interpolator=linear_interpolator
-    )
+    wrapper = LossWrapper(loss=single_output_loss, weight=2.0, interpolator=linear_interpolator)
     repr_str = wrapper.extra_repr()
     assert "weight=2.0" in repr_str
     assert "interpolator" in repr_str
 
 
 def test_eval_mode_behavior(single_output_loss, linear_interpolator):
-    wrapper = LossWrapper(
-        loss=single_output_loss,
-        weight=2.0,
-        interpolator=linear_interpolator
-    )
+    wrapper = LossWrapper(loss=single_output_loss, weight=2.0, interpolator=linear_interpolator)
     wrapper.eval()  # Disable training mode
 
     loss_value = wrapper()
@@ -162,11 +144,7 @@ def test_eval_mode_behavior(single_output_loss, linear_interpolator):
 
 
 def test_constant_interpolator(single_output_loss, constant_interpolator):
-    wrapper = LossWrapper(
-        loss=single_output_loss,
-        weight=2.0,
-        interpolator=constant_interpolator
-    )
+    wrapper = LossWrapper(loss=single_output_loss, weight=2.0, interpolator=constant_interpolator)
     wrapper.train()
 
     loss_value = wrapper()
@@ -174,11 +152,7 @@ def test_constant_interpolator(single_output_loss, constant_interpolator):
 
 
 def test_multi_interpolator(single_output_loss, multi_interpolator):
-    wrapper = LossWrapper(
-        loss=single_output_loss,
-        weight=2.0,
-        interpolator=multi_interpolator
-    )
+    wrapper = LossWrapper(loss=single_output_loss, weight=2.0, interpolator=multi_interpolator)
     wrapper.train()
 
     # Step 1 (first interpolator)
@@ -197,8 +171,9 @@ def test_multi_interpolator(single_output_loss, multi_interpolator):
 
 def test_invalid_interpolator_method():
     with pytest.raises(ValueError):
-        Interpolator(num_steps=10, method=InterpolationMode.EASE_OUT_ELASTIC,
-                     direction=Direction.DOWN)
+        Interpolator(
+            num_steps=10, method=InterpolationMode.EASE_OUT_ELASTIC, direction=Direction.DOWN
+        )
 
 
 def test_invalid_interpolator_direction():
@@ -207,10 +182,7 @@ def test_invalid_interpolator_direction():
 
 
 def test_dtype_for_zero(single_output_loss):
-    wrapper = LossWrapper(
-        loss=single_output_loss,
-        weight=0
-    )
+    wrapper = LossWrapper(loss=single_output_loss, weight=0)
     wrapper.train()
     wrapper.to(torch.float16)
     loss_value = wrapper()

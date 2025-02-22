@@ -2,7 +2,8 @@ import os
 
 import pytest
 
-DATA_FOLDER_NAME = 'data'
+DATA_FOLDER_NAME = "data"
+
 
 @pytest.fixture
 def data_dir() -> str:

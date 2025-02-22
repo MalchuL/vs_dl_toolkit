@@ -1,9 +1,9 @@
-from typing import List, Iterable
+from typing import Iterable, List
 
 import torch
 import torch.nn as nn
 
-from dl_toolkit.modules.feature_extractors.vgg_features import VGGFeatures, PaddingType
+from dl_toolkit.modules.feature_extractors.vgg_features import PaddingType, VGGFeatures
 from dl_toolkit.modules.losses import CharbonnierLoss
 from dl_toolkit.modules.toolkit_module import ToolkitModule
 
@@ -13,12 +13,12 @@ VGG19_BN_LAYERS = [3, 10, 23, 36]
 
 
 def PerceptualLossSimple(
-        model_name: str = "vgg19_bn",
-        loss_type: str = "charbonnier",
-        z_clip: float | None = None,
-        fix_pad=False,
-        apply_norm=True,
-        use_last_layers: int | None = None,
+    model_name: str = "vgg19_bn",
+    loss_type: str = "charbonnier",
+    z_clip: float | None = None,
+    fix_pad=False,
+    apply_norm=True,
+    use_last_layers: int | None = None,
 ):
     """
     Perceptual loss for image generation. Simplified version with good parameters
@@ -41,21 +41,22 @@ def PerceptualLossSimple(
 
 class PerceptualLoss(ToolkitModule):
     VERSION = "1.0.0"
+
     # Layers from https://towardsdatascience.com/implementing-neural-style-transfer-using-pytorch-fd8d43fb7bfa
     def __init__(
-            self,
-            model_name: str = "vgg19",
-            layers: List[int] = (),
-            apply_norm: bool = False,
-            loss_type: str = "smooth_l1",
-            weight_scaler: float = 2,
-            reverse_weights: bool = False,
-            padding: PaddingType = PaddingType.ZEROS,
-            z_clip: float | None = None,
+        self,
+        model_name: str = "vgg19",
+        layers: List[int] = (),
+        apply_norm: bool = False,
+        loss_type: str = "smooth_l1",
+        weight_scaler: float = 2,
+        reverse_weights: bool = False,
+        padding: PaddingType = PaddingType.ZEROS,
+        z_clip: float | None = None,
     ):
         super().__init__()
         assert (
-                layers is not None and len(layers) > 0
+            layers is not None and len(layers) > 0
         ), "Please add layers to content loss. i.e. [25] for vgg19 or [36] for vgg19"
 
         self.apply_norm = apply_norm
@@ -64,17 +65,16 @@ class PerceptualLoss(ToolkitModule):
         self.base_loss = self.get_loss(loss_type)
         self.padding = padding
         self.z_clip = z_clip
-        self.feature_extractor = self.get_model(
-            model_name=model_name, layers=layers
-        )
+        self.feature_extractor = self.get_model(model_name=model_name, layers=layers)
 
         weights = self.get_weights(len(layers), weight_scaler, reversed_weight=reverse_weights)
         self.layers = dict(zip(list(layers), weights))
         self.norm = self.get_norm(512)  # Instance Norm ignores num_channels
 
     def get_weights(self, num_layers, weight_scaler, reversed_weight) -> List[float]:
-        weights = list(reversed(
-            [1 / (weight_scaler ** i) for i in range(num_layers)]))  # Large weight at the end
+        weights = list(
+            reversed([1 / (weight_scaler**i) for i in range(num_layers)])
+        )  # Large weight at the end
         if reversed_weight:
             weights = list(reversed(weights))
         sum_weight = sum(weights)
@@ -83,10 +83,7 @@ class PerceptualLoss(ToolkitModule):
 
     def get_model(self, model_name, layers=()):
         return VGGFeatures(
-            network=model_name,
-            layers=layers,
-            padding_type=self.padding,
-            z_clipping=self.z_clip
+            network=model_name, layers=layers, padding_type=self.padding, z_clipping=self.z_clip
         )
 
     def get_loss(self, loss_type):
@@ -124,6 +121,8 @@ class PerceptualLoss(ToolkitModule):
         return loss
 
     def extra_repr(self) -> str:
-        return (f"Layers_weights: {self.layers}\n"
-                f"Apply norm: {self.apply_norm}\n"
-                f"Feature extractor: {self.feature_extractor}")
+        return (
+            f"Layers_weights: {self.layers}\n"
+            f"Apply norm: {self.apply_norm}\n"
+            f"Feature extractor: {self.feature_extractor}"
+        )

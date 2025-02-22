@@ -4,7 +4,7 @@ from dl_toolkit.modules.losses.image.perceptual_loss import PerceptualLossSimple
 
 
 def test_perceptual_loss():
-    loss = PerceptualLossSimple(loss_type='l1')
+    loss = PerceptualLossSimple(loss_type="l1")
     print(loss)
     x = torch.rand(1, 3, 256, 256)
     y = torch.rand(1, 3, 256, 256)

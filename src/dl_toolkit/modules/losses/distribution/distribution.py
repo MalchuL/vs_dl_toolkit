@@ -66,8 +66,14 @@ class DiagonalGaussianDistribution(AbstractDistribution):
                 )
             else:
                 return 0.5 * torch.mean(
-                    torch.sum(torch.pow(self.mean - other.mean, 2) / other.var
-                    + self.var / other.var - 1.0 - self.logvar + other.logvar, dim=dim)
+                    torch.sum(
+                        torch.pow(self.mean - other.mean, 2) / other.var
+                        + self.var / other.var
+                        - 1.0
+                        - self.logvar
+                        + other.logvar,
+                        dim=dim,
+                    )
                 )
 
     def nll(self, sample, dim=(1, 2, 3)):
@@ -75,7 +81,7 @@ class DiagonalGaussianDistribution(AbstractDistribution):
             return torch.Tensor([0.0]).type_as(self.mean)
         logtwopi = np.log(2.0 * np.pi)
         return 0.5 * torch.mean(
-            torch.sum(logtwopi + self.logvar + torch.pow(sample - self.mean, 2) / self.var,
-                      dim=dim)
+            torch.sum(
+                logtwopi + self.logvar + torch.pow(sample - self.mean, 2) / self.var, dim=dim
+            )
         )
-

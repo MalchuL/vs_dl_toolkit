@@ -3,14 +3,15 @@ from enum import Enum
 from typing import List, Tuple
 
 from dl_toolkit.utils.logging import logger
+
 from .tweenings import interpolate
-from enum import Enum
 
 
 class InterpolationMode(Enum):
     """
     Interpolation modes. You can look at https://pypi.org/project/pytweening/
     """
+
     LINEAR = "linear"
     EASE_IN_QUAD = "easeInQuad"
     EASE_OUT_QUAD = "easeOutQuad"
@@ -77,9 +78,12 @@ class AbstractInterpolator(ABC):
 
 
 class Interpolator(AbstractInterpolator):
-    def __init__(self, num_steps: int,
-                 method: str | InterpolationMode | None = InterpolationMode.LINEAR,
-                 direction: str | Direction = Direction.UP):
+    def __init__(
+        self,
+        num_steps: int,
+        method: str | InterpolationMode | None = InterpolationMode.LINEAR,
+        direction: str | Direction = Direction.UP,
+    ):
         """
         method - string name of pytweening lib
         num_steps - maximal number of steps
@@ -114,30 +118,41 @@ class Interpolator(AbstractInterpolator):
     def __check_method(method: InterpolationMode | None, direction: Direction, num_steps: int):
         if direction in (Direction.CONSTANT_0, Direction.CONSTANT_1):
             if method is not None:
-                raise ValueError("Method is not applicable for constant direction, "
-                                 "pass method=None")
+                raise ValueError(
+                    "Method is not applicable for constant direction, " "pass method=None"
+                )
         else:
             if method is None:
-                raise ValueError(f"Method is required to be not None "
-                                 "for dynamic direction={direction}")
+                raise ValueError(
+                    f"Method is required to be not None " "for dynamic direction={direction}"
+                )
             if num_steps <= 0:
-                raise ValueError("num_steps must be greater than 0 for dynamic direction, choose "
-                                 "CONSTANT_0 or CONSTANT_1")
+                raise ValueError(
+                    "num_steps must be greater than 0 for dynamic direction, choose "
+                    "CONSTANT_0 or CONSTANT_1"
+                )
 
         # Specific interpolation methods will be checked here
         if method in [InterpolationMode.EASE_OUT_ELASTIC, InterpolationMode.EASE_OUT_BACK]:
-            logger.warning(f"Method {method} used for interpolation would be larger "
-                           "that 1 (1.4 at max)")
+            logger.warning(
+                f"Method {method} used for interpolation would be larger " "that 1 (1.4 at max)"
+            )
             if direction == Direction.DOWN:
-                raise ValueError(f"Method {method} can't be used for direction {direction}, "
-                                 "because it would be larger that 1 (1.4 at max)")
+                raise ValueError(
+                    f"Method {method} can't be used for direction {direction}, "
+                    "because it would be larger that 1 (1.4 at max)"
+                )
         elif method in [InterpolationMode.EASE_IN_BOUNCE, InterpolationMode.EASE_IN_OUT_BOUNCE]:
-            logger.warning(f"Method {method} might be little bit lower "
-                           "than 0 (-0.01 at min), please note that")
+            logger.warning(
+                f"Method {method} might be little bit lower "
+                "than 0 (-0.01 at min), please note that"
+            )
 
     def __repr__(self):
-        return f"{self.__class__.__name__}({self.num_steps}, method={self.method}, " \
-               f"direction={self.direction})"
+        return (
+            f"{self.__class__.__name__}({self.num_steps}, method={self.method}, "
+            f"direction={self.direction})"
+        )
 
 
 class MultiInterpolator(AbstractInterpolator):

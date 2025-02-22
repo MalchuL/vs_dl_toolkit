@@ -1,9 +1,14 @@
-import pytest
-import torch
 from typing import Iterable
 
-from dl_toolkit.modules.layers.clipper import Clipper, ClipperChannelwise1D, ClipperChannelwise2D, \
-    ClipperWrapper
+import pytest
+import torch
+
+from dl_toolkit.modules.layers.clipper import (
+    Clipper,
+    ClipperChannelwise1D,
+    ClipperChannelwise2D,
+    ClipperWrapper,
+)
 from dl_toolkit.modules.toolkit_module import ToolkitModule
 from dl_toolkit.modules.utils.clipping_utils import z_clip
 
@@ -12,9 +17,10 @@ from dl_toolkit.modules.utils.clipping_utils import z_clip
 def sample_tensor1d():
     return torch.tensor([[1.0, 2.0, 3.0], [4.0, 5.0, 6.0], [7.0, 8.0, 9.0]])
 
+
 @pytest.fixture
 def sample_tensor2d():
-    return torch.tensor(range(10*10**10*10)).reshape(10, 10, 10, 10)
+    return torch.tensor(range(10 * 10**10 * 10)).reshape(10, 10, 10, 10)
 
 
 # Test Clipper
