@@ -8,6 +8,7 @@ import logging
 from dl_toolkit.utils.errors import ModuleVersionMismatchError
 
 logging.basicConfig(level=logging.WARNING)
+
 class RootModule(nn.Module):
     def __init__(self, version="1.0.0"):
         super().__init__()
