@@ -40,7 +40,7 @@ def test_wrong_interpolators():
     with pytest.raises(ValueError):
         interpolator = Interpolator(
             100, method=InterpolationMode.EASE_OUT_BACK, direction=Direction.DOWN
-        )  # You can't create interpolator with thoose parameters
+        )  # You can't create interpolator with those parameters
     with pytest.raises(ValueError):
         interpolator = Interpolator(2000, method=None, direction=Direction.DOWN)
 

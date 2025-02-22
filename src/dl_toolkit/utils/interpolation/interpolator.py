@@ -124,7 +124,7 @@ class Interpolator(AbstractInterpolator):
         else:
             if method is None:
                 raise ValueError(
-                    f"Method is required to be not None " "for dynamic direction={direction}"
+                    "Method is required to be not None " "for dynamic direction={direction}"
                 )
             if num_steps <= 0:
                 raise ValueError(
