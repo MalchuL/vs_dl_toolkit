@@ -36,8 +36,8 @@ class FourierEmbedding(ToolkitModule):
         freqs = torch.randn(num_channels // 2) * scale
         multiplier = torch.tensor(2 * np.pi).to(freqs.dtype)
 
-        self.register_buffer('freqs', freqs)
-        self.register_buffer('multiplier', multiplier)
+        self.register_buffer("freqs", freqs)
+        self.register_buffer("multiplier", multiplier)
 
     def forward(self, timesteps):
         """Computes Fourier embedding for input features.
@@ -51,8 +51,10 @@ class FourierEmbedding(ToolkitModule):
         """
         assert timesteps.dim() == 1, "Only supports 1D input tensors"
         if timesteps.max() > 1:
-            logger.warning(f"Input tensor {timesteps.max()} has values greater than 1. "
-                           "For Fouier embedding, input values should be between 0 and 1.")
+            logger.warning(
+                f"Input tensor {timesteps.max()} has values greater than 1. "
+                "For Fouier embedding, input values should be between 0 and 1."
+            )
         x = timesteps.outer(self.freqs * self.multiplier)
         x = torch.cat([x.cos(), x.sin()], dim=1) * SQRT_2
         return x

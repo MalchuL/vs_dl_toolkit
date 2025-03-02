@@ -1,6 +1,6 @@
+import numpy as np
 import pytest
 import torch
-import numpy as np
 from torch import nn
 
 from dl_toolkit.modules.layers.conv.sobel import SobelFilter
@@ -70,8 +70,4 @@ def test_grayscale_conversion():
 
 def test_kernel_values():
     kernel = SobelFilter.get_sobel_kernel(3)
-    assert np.allclose(kernel, [
-        [-0.5, 0, 0.5],
-        [-1.0, 0, 1.0],
-        [-0.5, 0, 0.5]
-    ], atol=0.1)
+    assert np.allclose(kernel, [[-0.5, 0, 0.5], [-1.0, 0, 1.0], [-0.5, 0, 0.5]], atol=0.1)

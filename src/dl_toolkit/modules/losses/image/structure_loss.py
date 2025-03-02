@@ -4,7 +4,7 @@ from torch import nn
 
 
 class StructureLoss(nn.Module):
-    def __init__(self, reduction: str="mean", eps=1e-08):
+    def __init__(self, reduction: str = "mean", eps=1e-08):
         super().__init__()
         self.reduction = reduction
         self.eps = eps

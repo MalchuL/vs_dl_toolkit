@@ -27,8 +27,13 @@ class GitDiffSaver:
         repo (git.Repo): GitPython repository instance
     """
 
-    def __init__(self, repo_dir: str, output_folder: str,
-                 tracking_files: list = None, save_untracked: bool = False):
+    def __init__(
+        self,
+        repo_dir: str,
+        output_folder: str,
+        tracking_files: list = None,
+        save_untracked: bool = False,
+    ):
         """Initialize differ with repository path and filters."""
         self.repo_dir = repo_dir
         self.repo = Repo(self.repo_dir)
@@ -67,8 +72,9 @@ class GitDiffSaver:
         # Write metadata files
         self._write_file("git_status.txt", "\n".join(git_status_data))
         self._write_file("git_diff.txt", self.repo.git.diff(hcommit))
-        self._write_file("git_revision.txt",
-                        f"{hcommit}\n{self.repo.git.status(hcommit).splitlines()[0]}")
+        self._write_file(
+            "git_revision.txt", f"{hcommit}\n{self.repo.git.status(hcommit).splitlines()[0]}"
+        )
 
     def _should_track(self, diff) -> bool:
         """Determine if a diff should be tracked based on filters."""

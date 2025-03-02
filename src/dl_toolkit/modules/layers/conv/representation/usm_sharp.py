@@ -13,9 +13,9 @@ def filter2D(img, kernel):
     k = kernel.size(-1)
     b, c, h, w = img.size()
     if k % 2 == 1:
-        img = F.pad(img, (k // 2, k // 2, k // 2, k // 2), mode='reflect')
+        img = F.pad(img, (k // 2, k // 2, k // 2, k // 2), mode="reflect")
     else:
-        raise ValueError('Wrong kernel size')
+        raise ValueError("Wrong kernel size")
 
     ph, pw = img.size()[-2:]
 
@@ -30,17 +30,17 @@ def filter2D(img, kernel):
         return F.conv2d(img, kernel, groups=b * c).view(b, c, h, w)
 
 
-def gkern(l: int = 5, sig: float = 1.) -> np.ndarray:
+def gkern(kernel: int = 5, sig: float = 1.0) -> np.ndarray:
     """Generate 1D Gaussian kernel array.
 
     Args:
-        l (int): Kernel length (should be odd)
+        kernel (int): Kernel length (should be odd)
         sig (float): Standard deviation of Gaussian distribution
 
     Returns:
         np.ndarray: Normalized 1D Gaussian kernel array
     """
-    ax = np.linspace(-(l - 1) / 2., (l - 1) / 2., l)
+    ax = np.linspace(-(kernel - 1) / 2.0, (kernel - 1) / 2.0, kernel)
     gauss = np.exp(-0.5 * np.square(ax) / np.square(sig))
     return gauss / gauss.sum()
 
@@ -64,14 +64,16 @@ class USMSharp(torch.nn.Module):
         if radius % 2 == 0:
             radius += 1
         if sigma <= 0:
-            raise ValueError('sigma must be positive')
+            raise ValueError("sigma must be positive")
         self.radius = radius
         kernel = gkern(radius, sigma)
 
         kernel = np.outer(kernel, kernel)  # Create 2D kernel
-        self.register_buffer('kernel', torch.FloatTensor(kernel).unsqueeze(0))
+        self.register_buffer("kernel", torch.FloatTensor(kernel).unsqueeze(0))
 
-    def forward(self, img: torch.Tensor, weight: float = 0.5, threshold: float = 10) -> torch.Tensor:
+    def forward(
+        self, img: torch.Tensor, weight: float = 0.5, threshold: float = 10
+    ) -> torch.Tensor:
         """Apply adaptive unsharp mask sharpening.
 
         Args:

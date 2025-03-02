@@ -9,10 +9,13 @@ from dl_toolkit.modules.layers.conv.representation.color_shift import ColorShift
 class TestColorShift:
     """Test suite for ColorShift module."""
 
-    @pytest.mark.parametrize("is_repeat,expected_channels", [
-        (True, 3),
-        (False, 1),
-    ])
+    @pytest.mark.parametrize(
+        "is_repeat,expected_channels",
+        [
+            (True, 3),
+            (False, 1),
+        ],
+    )
     def test_output_shape(self, is_repeat, expected_channels):
         """Test output shape matches expectations.
 

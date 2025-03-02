@@ -1,7 +1,7 @@
 import time
 
-import torch.nn as nn
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
 
 
@@ -30,8 +30,8 @@ class GuidedFilter(nn.Module):
         self.r = r
         self.input_channels = input_channels
         self.eps = eps
-        self.register_buffer('box_kernel', self.calculate_box_filter(self.r, self.input_channels))
-        self.register_buffer('N_box_kernel', self.calculate_box_filter(self.r, 1))
+        self.register_buffer("box_kernel", self.calculate_box_filter(self.r, self.input_channels))
+        self.register_buffer("N_box_kernel", self.calculate_box_filter(self.r, 1))
 
     @staticmethod
     def calculate_box_filter(r: int, ch: int) -> torch.Tensor:
@@ -57,10 +57,14 @@ class GuidedFilter(nn.Module):
         Returns:
             torch.Tensor: Filtered output tensor
         """
-        return F.conv2d(x,
-                        self.N_box_kernel if channels == 1 else self.box_kernel,
-                        bias=None, stride=1, padding='same',
-                        groups=self.input_channels if channels is None else channels)
+        return F.conv2d(
+            x,
+            self.N_box_kernel if channels == 1 else self.box_kernel,
+            bias=None,
+            stride=1,
+            padding="same",
+            groups=self.input_channels if channels is None else channels,
+        )
 
     def forward(self, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
         """Apply guided filtering operation.

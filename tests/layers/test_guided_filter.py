@@ -10,11 +10,14 @@ from dl_toolkit.modules.layers.conv.representation.guided_filter import GuidedFi
 class TestGuidedFilter:
     """Test suite for GuidedFilter module."""
 
-    @pytest.mark.parametrize("input_shape,r", [
-        ((2, 3, 64, 64), 1),
-        ((1, 3, 32, 32), 3),
-        ((4, 3, 128, 128), 5),
-    ])
+    @pytest.mark.parametrize(
+        "input_shape,r",
+        [
+            ((2, 3, 64, 64), 1),
+            ((1, 3, 32, 32), 3),
+            ((4, 3, 128, 128), 5),
+        ],
+    )
     def test_output_shape(self, input_shape, r):
         """Verify output maintains input dimensions.
 
@@ -26,7 +29,6 @@ class TestGuidedFilter:
         x = torch.rand(*input_shape)
         output = module(x, x)
         assert output.shape == x.shape
-
 
     @pytest.mark.parametrize("device", ["cpu", "cuda"])
     def test_device_consistency(self, device):

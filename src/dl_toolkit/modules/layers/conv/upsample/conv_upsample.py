@@ -5,8 +5,9 @@ from dl_toolkit.modules.toolkit_module import ToolkitModule
 
 
 class Upsample(ToolkitModule):
-    def __init__(self, in_channels, out_channels=None, depthwise=False,
-                 interpolate_mode="nearest"):
+    def __init__(
+        self, in_channels, out_channels=None, depthwise=False, interpolate_mode="nearest"
+    ):
         super().__init__()
         self.interpolate_mode = interpolate_mode
         out_channels = out_channels or in_channels

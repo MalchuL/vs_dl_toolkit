@@ -30,7 +30,6 @@ def test_clipper_forward(sample_tensor1d, sample_tensor2d):
     output = clipper(sample_tensor2d)
 
 
-
 # Test ClipperChannelwise1D
 def test_clipper_channelwise1d_forward(sample_tensor1d):
     clipper = ClipperChannelwise1D(z_score=2.0)

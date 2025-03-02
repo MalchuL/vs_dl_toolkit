@@ -1,10 +1,11 @@
 """Source code copying utility with pattern filtering."""
 
-import pytest
-import tempfile
-import os
 import fnmatch
+import os
+import tempfile
 from pathlib import Path
+
+import pytest
 
 from dl_toolkit.experiment_tracking.src_code_copy import CopySrcCode
 
@@ -23,11 +24,14 @@ class TestCopySrcCode:
         (base / "scripts" / "util" / "tools.py").touch()
         return base
 
-    @pytest.mark.parametrize("extensions,exclude,expected", [
-        (['.py'], ['*__init__.py'], ['code.py', 'tools.py']),
-        (['.py', '.yaml'], [], ['__init__.py', 'code.py', 'config.yaml', 'tools.py']),
-        (['.yaml'], None, ['config.yaml']),
-    ])
+    @pytest.mark.parametrize(
+        "extensions,exclude,expected",
+        [
+            ([".py"], ["*__init__.py"], ["code.py", "tools.py"]),
+            ([".py", ".yaml"], [], ["__init__.py", "code.py", "config.yaml", "tools.py"]),
+            ([".yaml"], None, ["config.yaml"]),
+        ],
+    )
     def test_basic_copy(self, tmpdir, extensions, exclude, expected):
         """Test core copying functionality with different filters.
 
@@ -43,11 +47,11 @@ class TestCopySrcCode:
             src_folder=str(src),
             output_folder=str(dest),
             file_extensions=extensions,
-            exclude_patterns=exclude
+            exclude_patterns=exclude,
         )
         copier()
 
-        found = [str(p.relative_to(dest).name) for p in dest.rglob('*') if p.is_file()]
+        found = [str(p.relative_to(dest).name) for p in dest.rglob("*") if p.is_file()]
         assert sorted(found) == sorted(expected)
 
     def test_nonexistent_source(self):
@@ -65,17 +69,10 @@ class TestCopySrcCode:
         src = self.create_test_structure(tmpdir)
         dest = Path(tmpdir.mkdir("dest"))
 
-        copier = CopySrcCode(
-            src_folder=str(src),
-            output_folder=str(dest),
-            file_extensions=['.py']
-        )
+        copier = CopySrcCode(src_folder=str(src), output_folder=str(dest), file_extensions=[".py"])
         copier()
 
-        expected_dirs = [
-            dest / "module",
-            dest / "scripts" / "util"
-        ]
+        expected_dirs = [dest / "module", dest / "scripts" / "util"]
         for d in expected_dirs:
             assert d.exists()
 
@@ -86,11 +83,7 @@ class TestCopySrcCode:
         (dest / "module").mkdir(parents=True)
         (dest / "module" / "code.py").touch()  # Existing dir
 
-        copier = CopySrcCode(
-            src_folder=str(src),
-            output_folder=str(dest),
-            file_extensions=['.py']
-        )
+        copier = CopySrcCode(src_folder=str(src), output_folder=str(dest), file_extensions=[".py"])
         copier()
 
         assert (dest / "module" / "code.py").is_file()

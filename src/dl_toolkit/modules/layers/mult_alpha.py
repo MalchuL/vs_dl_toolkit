@@ -6,7 +6,7 @@ from dl_toolkit.modules.toolkit_module import ToolkitModule
 
 class MultAlpha(ToolkitModule):
     """
-    Implements f(x) * alpha, usefull in cases y + f(x) * alpha where you don't want to keep parameters in the model
+    Implements f(x) * alpha, useful in cases y + f(x) * alpha where you don't want to keep parameters in the model
     """
 
     def __init__(self, module, init_blend=0.0):
@@ -19,4 +19,4 @@ class MultAlpha(ToolkitModule):
         return self.module(*args, **kwargs) * alpha
 
     def extra_repr(self):
-        return 'blend_value={}'.format(self.alpha.item())
+        return f"blend_value={self.alpha.item()}"

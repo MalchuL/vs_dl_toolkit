@@ -12,10 +12,13 @@ def input_tensor():
 
 
 # Test initialization of GANLoss
-@pytest.mark.parametrize("clip, is_logit, expected_min, expected_max", [
-    (0.2, False, 0.2, 0.8),
-    (0.3, True, logit(torch.tensor(0.3)).item(), logit(torch.tensor(0.7)).item()),
-])
+@pytest.mark.parametrize(
+    "clip, is_logit, expected_min, expected_max",
+    [
+        (0.2, False, 0.2, 0.8),
+        (0.3, True, logit(torch.tensor(0.3)).item(), logit(torch.tensor(0.7)).item()),
+    ],
+)
 def test_gan_loss_init(clip, is_logit, expected_min, expected_max):
     gan_loss = GANLoss(clip=clip, is_logit=is_logit)
     assert gan_loss.use_clip
@@ -39,11 +42,13 @@ def test_get_target_tensor(input_tensor, target_is_real):
 
 
 # Test tensor clipping functionality
-@pytest.mark.parametrize("is_logit, clip, input_vals, expected_vals", [
-    (False, 0.2, [0.1, 0.3, 0.9], [0.2, 0.3, 0.8]),
-    (True, 0.1, [logit(0.05), logit(0.5), logit(0.95)],
-     [logit(0.1), logit(0.5), logit(0.9)]),
-])
+@pytest.mark.parametrize(
+    "is_logit, clip, input_vals, expected_vals",
+    [
+        (False, 0.2, [0.1, 0.3, 0.9], [0.2, 0.3, 0.8]),
+        (True, 0.1, [logit(0.05), logit(0.5), logit(0.95)], [logit(0.1), logit(0.5), logit(0.9)]),
+    ],
+)
 def test_clip_tensor(is_logit, clip, input_vals, expected_vals):
     gan_loss = GANLoss(clip=clip, is_logit=is_logit)
     input_tensor = torch.tensor(input_vals)
@@ -53,13 +58,29 @@ def test_clip_tensor(is_logit, clip, input_vals, expected_vals):
 
 
 # Test forward pass with different configurations
-@pytest.mark.parametrize("criterion, is_logit, clip, pred, target_is_real, expected", [
-    (BCELoss(), False, None, [1.0], True, 0.0),
-    (BCELoss(), False, 0.1, [0.0], True, BCELoss()(torch.tensor([0.1]), torch.tensor([1.0]))),
-    (BCEWithLogitsLoss(), True, 0.2, [2.0], True,
-     BCEWithLogitsLoss()(torch.tensor([logit(0.8)]), torch.tensor([1.0]))),
-    (BCELoss(), False, None, [0.4], False, BCELoss()(torch.tensor([0.4]), torch.tensor([0.0]))),
-])
+@pytest.mark.parametrize(
+    "criterion, is_logit, clip, pred, target_is_real, expected",
+    [
+        (BCELoss(), False, None, [1.0], True, 0.0),
+        (BCELoss(), False, 0.1, [0.0], True, BCELoss()(torch.tensor([0.1]), torch.tensor([1.0]))),
+        (
+            BCEWithLogitsLoss(),
+            True,
+            0.2,
+            [2.0],
+            True,
+            BCEWithLogitsLoss()(torch.tensor([logit(0.8)]), torch.tensor([1.0])),
+        ),
+        (
+            BCELoss(),
+            False,
+            None,
+            [0.4],
+            False,
+            BCELoss()(torch.tensor([0.4]), torch.tensor([0.0])),
+        ),
+    ],
+)
 def test_forward_pass(criterion, is_logit, clip, pred, target_is_real, expected):
     gan_loss = GANLoss(criterion=criterion, is_logit=is_logit, clip=clip)
     pred_tensor = torch.tensor(pred, dtype=torch.float32)

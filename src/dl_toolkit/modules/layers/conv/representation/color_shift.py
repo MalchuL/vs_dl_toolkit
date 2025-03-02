@@ -18,10 +18,10 @@ class ColorShift(ToolkitModule):
         weight_mode (str): Current weight sampling mode
     """
 
-    def __init__(self, weight_mode='uniform', is_repeat=True):
+    def __init__(self, weight_mode="uniform", is_repeat=True):
         super().__init__()
         self.is_repeat = is_repeat
-        if weight_mode not in ['normal', 'uniform']:
+        if weight_mode not in ["normal", "uniform"]:
             raise ValueError("Weight_mode must be in ['normal','uniform']")
         self.weight_mode = weight_mode
 
@@ -72,24 +72,31 @@ class ColorShift(ToolkitModule):
         r, g, b = torch.chunk(image, chunks=3, dim=1)
 
         # Generate channel weights
-        if self.weight_mode == 'normal':
-            r_weight = self.random_normal(N, 1, 1, 1, mean=0.299, stddev=0.1,
-                                         dtype=dtype, device=device)
-            g_weight = self.random_normal(N, 1, 1, 1, mean=0.587, stddev=0.1,
-                                         dtype=dtype, device=device)
-            b_weight = self.random_normal(N, 1, 1, 1, mean=0.114, stddev=0.1,
-                                         dtype=dtype, device=device)
-        elif self.weight_mode == 'uniform':
-            r_weight = self.random_uniform(N, 1, 1, 1, minval=0.199, max_val=0.399,
-                                          dtype=dtype, device=device)
-            g_weight = self.random_uniform(N, 1, 1, 1, minval=0.487, max_val=0.687,
-                                          dtype=dtype, device=device)
-            b_weight = self.random_uniform(N, 1, 1, 1, minval=0.014, max_val=0.214,
-                                          dtype=dtype, device=device)
+        if self.weight_mode == "normal":
+            r_weight = self.random_normal(
+                N, 1, 1, 1, mean=0.299, stddev=0.1, dtype=dtype, device=device
+            )
+            g_weight = self.random_normal(
+                N, 1, 1, 1, mean=0.587, stddev=0.1, dtype=dtype, device=device
+            )
+            b_weight = self.random_normal(
+                N, 1, 1, 1, mean=0.114, stddev=0.1, dtype=dtype, device=device
+            )
+        elif self.weight_mode == "uniform":
+            r_weight = self.random_uniform(
+                N, 1, 1, 1, minval=0.199, max_val=0.399, dtype=dtype, device=device
+            )
+            g_weight = self.random_uniform(
+                N, 1, 1, 1, minval=0.487, max_val=0.687, dtype=dtype, device=device
+            )
+            b_weight = self.random_uniform(
+                N, 1, 1, 1, minval=0.014, max_val=0.214, dtype=dtype, device=device
+            )
 
         # Combine weighted channels
         output = (r_weight * r + g * g_weight + b * b_weight) / (
-                    r_weight + g_weight + b_weight + 1e-6)
+            r_weight + g_weight + b_weight + 1e-6
+        )
 
         if self.is_repeat:
             output = output.repeat(1, 3, 1, 1)

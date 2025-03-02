@@ -24,7 +24,7 @@ def test_coord_conv():
 
 def test_with_r():
     coords = CoordConv()
-    coords_with_r= CoordConv(with_r=True)
+    coords_with_r = CoordConv(with_r=True)
     assert coords.channels == 2
     assert coords_with_r.channels == 3
     x = torch.randn(4, 3, 128, 128)

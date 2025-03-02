@@ -39,7 +39,9 @@ def is_seq_of(seq: Any, expected_type: Union[Type, tuple], seq_type: Type = None
     return True
 
 
-def value2list(value: Any, valid_type: Union[Type, Tuple[Type, ...]], expand_dim: int) -> List[Any]:
+def value2list(
+    value: Any, valid_type: Union[Type, Tuple[Type, ...]], expand_dim: int
+) -> List[Any]:
     """If the type of ``value`` is ``valid_type``, convert the value to list and expand to ``expand_dim``.
 
     Args:
@@ -78,11 +80,14 @@ def check_length(name: str, value: Any, valid_length: int) -> None:
     if isinstance(value, list):
         if len(value) < valid_length:
             raise AssertionError(
-                f"The length of {name} must equal with or " f"greater than {valid_length}, but got {len(value)}"
+                f"The length of {name} must equal with or "
+                f"greater than {valid_length}, but got {len(value)}"
             )
 
 
-def check_type_and_length(name: str, value: Any, valid_type: Union[Type, Tuple[Type, ...]], valid_length: int) -> None:
+def check_type_and_length(
+    name: str, value: Any, valid_type: Union[Type, Tuple[Type, ...]], valid_length: int
+) -> None:
     """Check whether the type of value is in ``valid_type``. If type of the ``value`` is list, check whether its length
     is equal with or greater than ``valid_length``.
 
@@ -99,7 +104,7 @@ def check_type_and_length(name: str, value: Any, valid_type: Union[Type, Tuple[T
 
 
 def color_val_matplotlib(
-    colors: Union[str, tuple, List[Union[str, tuple]]]
+    colors: Union[str, tuple, List[Union[str, tuple]]],
 ) -> Union[str, tuple, List[Union[str, tuple]]]:
     """Convert various input in RGB order to normalized RGB matplotlib color
     tuples,

@@ -25,8 +25,8 @@ class CLIArgumentsDumper:
         self.output_path = output_path
 
     def _get_additional_args(self):
-        running_script = ''
-        cuda_devices = os.environ.get('CUDA_VISIBLE_DEVICES', '')
+        running_script = ""
+        cuda_devices = os.environ.get("CUDA_VISIBLE_DEVICES", "")
         if cuda_devices:
             running_script += f"CUDA_VISIBLE_DEVICES={cuda_devices} "
         return running_script
@@ -41,7 +41,7 @@ class CLIArgumentsDumper:
         full_command = f"{command_prefix}python {' '.join(sys.argv)}"
 
         Path(self.output_path).parent.mkdir(parents=True, exist_ok=True)
-        with open(self.output_path, 'w') as f:
+        with open(self.output_path, "w") as f:
             f.write(full_command)
 
     def __call__(self) -> None:

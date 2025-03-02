@@ -6,7 +6,7 @@ from dl_toolkit.modules.toolkit_module import ToolkitModule
 # TODO add pydoc for this class
 class CoordConv(ToolkitModule):
     def __init__(self, with_r=False):
-        super(CoordConv, self).__init__()
+        super().__init__()
         self.with_r = with_r
         # For buffering tensors
         self._last_shape = None

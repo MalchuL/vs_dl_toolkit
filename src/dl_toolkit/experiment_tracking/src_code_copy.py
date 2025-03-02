@@ -1,8 +1,8 @@
+import fnmatch
 import os
 import shutil
-from typing import Optional, List
-import fnmatch
 from pathlib import Path
+from typing import List, Optional
 
 from dl_toolkit.utils.path_utils import iterate_files_with_creating_structure
 
@@ -28,24 +28,31 @@ class CopySrcCode:
         exclude_patterns (List[str]): Active exclusion patterns
     """
 
-    def __init__(self, src_folder: str, output_folder: str,
-                 file_extensions: Optional[List[str]] = ('.py',),
-                 exclude_patterns: Optional[List[str]] = ('*__init__.py',)):
+    def __init__(
+        self,
+        src_folder: str,
+        output_folder: str,
+        file_extensions: Optional[List[str]] = (".py",),
+        exclude_patterns: Optional[List[str]] = ("*__init__.py",),
+    ):
         """Initialize copier with validation checks."""
-        assert os.path.isdir(src_folder) and os.path.exists(src_folder), \
-            "Source folder must exist"
+        assert os.path.isdir(src_folder) and os.path.exists(src_folder), "Source folder must exist"
         self.src_folder = src_folder
-        self.output_folder = output_folder or '.'
+        self.output_folder = output_folder or "."
 
-        assert file_extensions is not None and len(file_extensions) > 0, \
-            "At least one file extension required"
+        assert (
+            file_extensions is not None and len(file_extensions) > 0
+        ), "At least one file extension required"
         self.file_extensions = file_extensions
         self.exclude_patterns = exclude_patterns
 
     @staticmethod
-    def dump_src(src_folder: str, output_folder: str,
-                 file_extensions: List[str],
-                 exclude_patterns: Optional[List[str]]) -> None:
+    def dump_src(
+        src_folder: str,
+        output_folder: str,
+        file_extensions: List[str],
+        exclude_patterns: Optional[List[str]],
+    ) -> None:
         """Copy files with given extensions, excluding patterns.
 
         Args:
@@ -71,8 +78,5 @@ class CopySrcCode:
     def __call__(self) -> None:
         """Execute the copy operation."""
         self.dump_src(
-            self.src_folder,
-            self.output_folder,
-            self.file_extensions,
-            self.exclude_patterns
+            self.src_folder, self.output_folder, self.file_extensions, self.exclude_patterns
         )

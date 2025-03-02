@@ -1,4 +1,3 @@
-
 import warnings
 from typing import TYPE_CHECKING, List, Optional, Union
 
@@ -132,7 +131,10 @@ class Visualizer:
     """
 
     def __init__(
-        self, image: Optional[np.ndarray] = None, fig_save_cfg=dict(frameon=False), fig_show_cfg=dict(frameon=False)
+        self,
+        image: Optional[np.ndarray] = None,
+        fig_save_cfg=dict(frameon=False),
+        fig_show_cfg=dict(frameon=False),
     ) -> None:
         self.fig_save = None
         self.fig_save_cfg = fig_save_cfg
@@ -248,7 +250,7 @@ class Visualizer:
                 https://matplotlib.org/stable/gallery/color/named_colors.html
                 for more details. Defaults to 'g.
             marker (str, optional): The marker style.
-                See :mod:`matplotlib.markers` for more information about
+                See mod `matplotlib.markers` for more information about
                 marker styles. Defaults to None.
             sizes (Optional[Union[np.ndarray, torch.Tensor]]): The marker size.
                 Defaults to None.
@@ -257,7 +259,9 @@ class Visualizer:
 
         if len(positions.shape) == 1:
             positions = positions[None]
-        assert positions.shape[-1] == 2, "The shape of `positions` should be (N, 2), " f"but got {positions.shape}"
+        assert positions.shape[-1] == 2, (
+            "The shape of `positions` should be (N, 2), " f"but got {positions.shape}"
+        )
         colors = color_val_matplotlib(colors)  # type: ignore
         self.ax_save.scatter(positions[:, 0], positions[:, 1], c=colors, s=sizes, marker=marker)
         return self
@@ -348,7 +352,10 @@ class Visualizer:
             "`positions` should have the shape of " f"({num_text}, 2), but got {positions.shape}"
         )
         if not self._is_posion_valid(positions):
-            warnings.warn("Warning: The text is out of bounds," " the drawn text may not be in the image", UserWarning)
+            warnings.warn(
+                "Warning: The text is out of bounds," " the drawn text may not be in the image",
+                UserWarning,
+            )
         positions = positions.tolist()
 
         if font_sizes is None:
@@ -363,7 +370,9 @@ class Visualizer:
         check_type_and_length("vertical_alignments", vertical_alignments, (str, list), num_text)
         vertical_alignments = value2list(vertical_alignments, str, num_text)
 
-        check_type_and_length("horizontal_alignments", horizontal_alignments, (str, list), num_text)
+        check_type_and_length(
+            "horizontal_alignments", horizontal_alignments, (str, list), num_text
+        )
         horizontal_alignments = value2list(horizontal_alignments, str, num_text)
 
         check_type_and_length("font_families", font_families, (str, list), num_text)
@@ -372,7 +381,9 @@ class Visualizer:
         if font_properties is None:
             font_properties = [None for _ in range(num_text)]  # type: ignore
         else:
-            check_type_and_length("font_properties", font_properties, (FontProperties, list), num_text)
+            check_type_and_length(
+                "font_properties", font_properties, (FontProperties, list), num_text
+            )
             font_properties = value2list(font_properties, FontProperties, num_text)
 
         if bboxes is None:
@@ -435,15 +446,22 @@ class Visualizer:
         check_type("x_datas", x_datas, (np.ndarray,))
         check_type("y_datas", y_datas, (np.ndarray,))
         assert x_datas.shape == y_datas.shape, "`x_datas` and `y_datas` should have the same shape"
-        assert x_datas.shape[-1] == 2, f"The shape of `x_datas` should be (N, 2), but got {x_datas.shape}"
+        assert (
+            x_datas.shape[-1] == 2
+        ), f"The shape of `x_datas` should be (N, 2), but got {x_datas.shape}"
         if len(x_datas.shape) == 1:
             x_datas = x_datas[None]
             y_datas = y_datas[None]
         colors = color_val_matplotlib(colors)  # type: ignore
         lines = np.concatenate((x_datas.reshape(-1, 2, 1), y_datas.reshape(-1, 2, 1)), axis=-1)
         if not self._is_posion_valid(lines):
-            warnings.warn("Warning: The line is out of bounds," " the drawn line may not be in the image", UserWarning)
-        line_collect = LineCollection(lines.tolist(), colors=colors, linestyles=line_styles, linewidths=line_widths)
+            warnings.warn(
+                "Warning: The line is out of bounds," " the drawn line may not be in the image",
+                UserWarning,
+            )
+        line_collect = LineCollection(
+            lines.tolist(), colors=colors, linestyles=line_styles, linewidths=line_widths
+        )
         self.ax_save.add_collection(line_collect)
         return self
 
@@ -502,7 +520,9 @@ class Visualizer:
             and self._is_posion_valid(center + np.tile(radius.reshape((-1, 1)), (1, 2)))
         ):
             warnings.warn(
-                "Warning: The circle is out of bounds," " the drawn circle may not be in the image", UserWarning
+                "Warning: The circle is out of bounds,"
+                " the drawn circle may not be in the image",
+                UserWarning,
             )
 
         center = center.tolist()
@@ -515,7 +535,9 @@ class Visualizer:
 
         if isinstance(line_widths, (int, float)):
             line_widths = [line_widths] * len(circles)
-        line_widths = [min(max(linewidth, 1), self._default_font_size / 4) for linewidth in line_widths]
+        line_widths = [
+            min(max(linewidth, 1), self._default_font_size / 4) for linewidth in line_widths
+        ]
         p = PatchCollection(
             circles,
             alpha=alpha,
@@ -568,11 +590,16 @@ class Visualizer:
 
         if len(bboxes.shape) == 1:
             bboxes = bboxes[None]
-        assert bboxes.shape[-1] == 4, f"The shape of `bboxes` should be (N, 4), but got {bboxes.shape}"
+        assert (
+            bboxes.shape[-1] == 4
+        ), f"The shape of `bboxes` should be (N, 4), but got {bboxes.shape}"
 
         assert (bboxes[:, 0] <= bboxes[:, 2]).all() and (bboxes[:, 1] <= bboxes[:, 3]).all()
         if not self._is_posion_valid(bboxes.reshape((-1, 2, 2))):
-            warnings.warn("Warning: The bbox is out of bounds," " the drawn bbox may not be in the image", UserWarning)
+            warnings.warn(
+                "Warning: The bbox is out of bounds," " the drawn bbox may not be in the image",
+                UserWarning,
+            )
         poly = np.stack(
             (
                 bboxes[:, 0],
@@ -645,16 +672,21 @@ class Visualizer:
         if isinstance(polygons, list):
             for polygon in polygons:
                 assert polygon.shape[1] == 2, (
-                    "The shape of each polygon in `polygons` should be (M, 2)," f" but got {polygon.shape}"
+                    "The shape of each polygon in `polygons` should be (M, 2),"
+                    f" but got {polygon.shape}"
                 )
         for polygon in polygons:
             if not self._is_posion_valid(polygon):
                 warnings.warn(
-                    "Warning: The polygon is out of bounds," " the drawn polygon may not be in the image", UserWarning
+                    "Warning: The polygon is out of bounds,"
+                    " the drawn polygon may not be in the image",
+                    UserWarning,
                 )
         if isinstance(line_widths, (int, float)):
             line_widths = [line_widths] * len(polygons)
-        line_widths = [min(max(linewidth, 1), self._default_font_size / 4) for linewidth in line_widths]
+        line_widths = [
+            min(max(linewidth, 1), self._default_font_size / 4) for linewidth in line_widths
+        ]
         polygon_collection = PolyCollection(
             polygons,
             alpha=alpha,
@@ -700,7 +732,9 @@ class Visualizer:
         img = self.get_image()
         if binary_masks.ndim == 2:
             binary_masks = binary_masks[None]
-        assert img.shape[:2] == binary_masks.shape[1:], "`binary_masks` must have " "the same shape with image"
+        assert img.shape[:2] == binary_masks.shape[1:], (
+            "`binary_masks` must have " "the same shape with image"
+        )
         binary_mask_len = binary_masks.shape[0]
 
         check_type_and_length("colors", colors, (str, tuple, list), binary_mask_len)

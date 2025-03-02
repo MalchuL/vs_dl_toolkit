@@ -1,8 +1,11 @@
+import numpy as np
 import pytest
 import torch
-import numpy as np
 
-from dl_toolkit.modules.layers.embeddings.fourier_embedding import SQRT_2, FourierEmbedding
+from dl_toolkit.modules.layers.embeddings.fourier_embedding import (
+    SQRT_2,
+    FourierEmbedding,
+)
 
 
 @pytest.fixture
@@ -23,8 +26,7 @@ def test_output_shape(sample_input):
     num_channels = 64
     layer = FourierEmbedding(num_channels)
     output = layer(sample_input)
-    assert output.shape == (sample_input.shape[0],
-                            num_channels)
+    assert output.shape == (sample_input.shape[0], num_channels)
 
 
 def test_frequency_scaling(monkeypatch):
@@ -35,14 +37,14 @@ def test_frequency_scaling(monkeypatch):
     def mock_randn(size):
         return torch.ones(size)
 
-    monkeypatch.setattr(torch, 'randn', mock_randn)
+    monkeypatch.setattr(torch, "randn", mock_randn)
 
     layer = FourierEmbedding(num_channels, scale=scale)
     assert torch.allclose(layer.freqs, torch.ones(8) * scale)
 
 
 def test_device_consistency():
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     layer = FourierEmbedding(32).to(device)
     x = torch.randn(10).to(device)
     output = layer(x)

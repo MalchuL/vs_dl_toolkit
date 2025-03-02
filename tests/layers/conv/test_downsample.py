@@ -2,8 +2,11 @@ import pytest
 import torch
 from torch import nn
 
-from dl_toolkit.modules.layers.conv.downsample.conv_downsample import Downsample, BlurPool, \
-    AvgPoolNorm
+from dl_toolkit.modules.layers.conv.downsample.conv_downsample import (
+    AvgPoolNorm,
+    BlurPool,
+    Downsample,
+)
 
 
 def test_blurpool_shape():
@@ -17,6 +20,7 @@ def test_downsample_channels():
     x = torch.randn(2, 3, 32, 32)
     assert block(x).shape == (2, 64, 16, 16)
 
+
 @pytest.mark.parametrize("pool_type", ["avg", "blur"])
 @pytest.mark.parametrize("filt_size", [3, 5])
 def test_variance_preservation(pool_type, filt_size):
@@ -29,10 +33,8 @@ def test_variance_preservation(pool_type, filt_size):
     var_in = x.var()
     var_out = out.var()
     print(var_in, var_out)
-    assert out.shape[2] == x.shape[2]// 2
+    assert out.shape[2] == x.shape[2] // 2
     assert torch.allclose(var_in, var_out, rtol=0.1)
-
-
 
 
 def test_gradient_flow():

@@ -8,8 +8,9 @@ from dl_toolkit.modules.utils.math import logit
 
 
 class GANLoss(nn.Module):
-    def __init__(self, criterion: nn.Module = nn.BCELoss(), is_logit: bool = True,
-                 clip: float | None = None):
+    def __init__(
+        self, criterion: nn.Module = nn.BCELoss(), is_logit: bool = True, clip: float | None = None
+    ):
         super().__init__()
         self.register_buffer("real_label", torch.tensor(1.0))
         self.register_buffer("fake_label", torch.tensor(0.0))

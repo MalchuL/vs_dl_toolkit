@@ -9,13 +9,16 @@ def test_inheritance():
     assert issubclass(Upsample, torch.nn.Module)  # Assuming ToolkitModule is a nn.Module subclass
 
 
-@pytest.mark.parametrize("in_channels, out_channels, depthwise, input_size", [
-    (3, 3, False, (4, 4)),  # Basic case
-    (3, 6, False, (5, 5)),  # Channel expansion
-    (4, 8, True, (3, 3)),  # Valid depthwise (8 % 4 == 0)
-    (2, 2, True, (6, 6)),  # Depthwise same channels
-    (1, 1, True, (2, 2)),  # Minimum channels
-])
+@pytest.mark.parametrize(
+    "in_channels, out_channels, depthwise, input_size",
+    [
+        (3, 3, False, (4, 4)),  # Basic case
+        (3, 6, False, (5, 5)),  # Channel expansion
+        (4, 8, True, (3, 3)),  # Valid depthwise (8 % 4 == 0)
+        (2, 2, True, (6, 6)),  # Depthwise same channels
+        (1, 1, True, (2, 2)),  # Minimum channels
+    ],
+)
 def test_output_shape(in_channels, out_channels, depthwise, input_size):
     """Test if output shape matches expectations after upsampling."""
     if depthwise and (out_channels % in_channels != 0):
@@ -34,10 +37,13 @@ def test_output_shape(in_channels, out_channels, depthwise, input_size):
     assert output.shape == expected_shape, f"Expected {expected_shape}, got {output.shape}"
 
 
-@pytest.mark.parametrize("depthwise, groups", [
-    (True, 4),  # Depthwise should set groups=in_channels
-    (False, 1),  # Regular convolution uses groups=1
-])
+@pytest.mark.parametrize(
+    "depthwise, groups",
+    [
+        (True, 4),  # Depthwise should set groups=in_channels
+        (False, 1),  # Regular convolution uses groups=1
+    ],
+)
 def test_conv_groups(depthwise, groups):
     """Test depthwise convolution group configuration."""
     in_channels = 4
