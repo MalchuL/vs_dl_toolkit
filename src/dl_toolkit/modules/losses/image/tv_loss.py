@@ -5,7 +5,7 @@ import torch.nn as nn
 
 
 class TVLoss(nn.Module):
-    def __init__(self, shift_size=1, reduction="mean"):
+    def __init__(self, shift_size: int = 1, reduction: str = "mean"):
         super().__init__()
         assert shift_size >= 1
         self.shift_size = shift_size

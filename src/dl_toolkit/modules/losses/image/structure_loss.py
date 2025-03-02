@@ -4,9 +4,10 @@ from torch import nn
 
 
 class StructureLoss(nn.Module):
-    def __init__(self, reduction="mean"):
+    def __init__(self, reduction: str="mean", eps=1e-08):
         super().__init__()
         self.reduction = reduction
+        self.eps = eps
 
     @staticmethod
     def attn_cosine_sim(x, eps=1e-08):
@@ -15,7 +16,7 @@ class StructureLoss(nn.Module):
         return sim_matrix
 
     def forward(self, pred, target):
-        sim_pred = self.attn_cosine_sim(pred)
+        sim_pred = self.attn_cosine_sim(pred, eps=self.eps)
         with torch.no_grad():
-            sim_target = self.attn_cosine_sim(target)
+            sim_target = self.attn_cosine_sim(target, eps=self.eps)
         return F.mse_loss(sim_pred, sim_target, reduction=self.reduction)
