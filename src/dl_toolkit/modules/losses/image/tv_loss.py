@@ -1,10 +1,11 @@
 import random
 
 import torch
-import torch.nn as nn
+
+from dl_toolkit.modules.toolkit_module import ToolkitModule
 
 
-class TVLoss(nn.Module):
+class TVLoss(ToolkitModule):
     def __init__(self, shift_size: int = 1, reduction: str = "mean"):
         super().__init__()
         assert shift_size >= 1

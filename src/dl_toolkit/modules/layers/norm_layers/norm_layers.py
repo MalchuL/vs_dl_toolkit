@@ -2,7 +2,7 @@ import functools
 
 import torch.nn as nn
 
-from .group_norm import GroupNorm8, GroupNorm
+from .group_norm import GroupNorm, GroupNorm8
 
 
 def get_norm_layer(norm_type="instance"):

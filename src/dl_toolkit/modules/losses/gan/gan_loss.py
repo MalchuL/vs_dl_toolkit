@@ -1,13 +1,13 @@
-import math
 from typing import Tuple
 
 import torch
 import torch.nn as nn
 
+from dl_toolkit.modules.toolkit_module import ToolkitModule
 from dl_toolkit.modules.utils.math import logit
 
 
-class GANLoss(nn.Module):
+class GANLoss(ToolkitModule):
     def __init__(
         self, criterion: nn.Module = nn.BCELoss(), is_logit: bool = True, clip: float | None = None
     ):

@@ -1,10 +1,11 @@
 import torch
 from torch import nn
 
+from ...toolkit_module import ToolkitModule
 from .constants import BIAS, PADDING_MODE
 
 
-class SeparableConv2d(nn.Module):
+class SeparableConv2d(ToolkitModule):
     """Implements a separable convolution layer with different architecture modes.
 
     Separable convolutions factorize standard convolutions into depthwise and pointwise

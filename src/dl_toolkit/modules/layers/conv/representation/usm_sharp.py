@@ -2,6 +2,8 @@ import numpy as np
 import torch
 from torch.nn import functional as F
 
+from dl_toolkit.modules.toolkit_module import ToolkitModule
+
 
 def filter2D(img, kernel):
     """PyTorch version of cv2.filter2D
@@ -45,7 +47,7 @@ def gkern(kernel: int = 5, sig: float = 1.0) -> np.ndarray:
     return gauss / gauss.sum()
 
 
-class USMSharp(torch.nn.Module):
+class USMSharp(ToolkitModule):
     """Unsharp Mask sharpening module with adaptive thresholding.
 
     Reference: https://arxiv.org/pdf/2107.10833

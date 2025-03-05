@@ -14,16 +14,6 @@ def test_init_requires_gain():
         init_weights(net, init_type="uniform", gain=None)
 
 
-@pytest.mark.parametrize(
-    "init_type,gain,min_max",
-    [
-        ("normal", 0.02, (-0.02, 0.02)),
-        ("uniform", 0.02, (-0.02, 0.02)),
-        ("xavier_normal", 0.02, (-0.02, 0.02)),
-        ("kaiming_normal", 0.02, (-0.02, 0.02)),
-        ("zeros", None, (0.0, 0.0)),
-    ],
-)
 def test_batchnorm_init():
     """Test BatchNorm2d weight=1 and bias=0."""
     net = nn.BatchNorm2d(3)

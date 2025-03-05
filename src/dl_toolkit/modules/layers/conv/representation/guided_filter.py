@@ -4,9 +4,11 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+from dl_toolkit.modules.toolkit_module import ToolkitModule
+
 
 # Fdgf from https://openaccess.thecvf.com/content_CVPR_2020/papers/Wang_Learning_to_Cartoonize_Using_White-Box_Cartoon_Representations_CVPR_2020_paper.pdf
-class GuidedFilter(nn.Module):
+class GuidedFilter(ToolkitModule):
     """Guided filter implementation from White-Box Cartoonization.
 
     Reference: https://openaccess.thecvf.com/content_CVPR_2020/papers/Wang_Learning_to_Cartoonize_Using_White-Box_Cartoon_Representations_CVPR_2020_paper.pdf

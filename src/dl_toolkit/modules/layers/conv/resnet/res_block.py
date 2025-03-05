@@ -1,11 +1,13 @@
 from torch import nn
 
+from dl_toolkit.modules.toolkit_module import ToolkitModule
+
+from ...activation import get_act
 from ..convbnrelu import Conv2dBNReLU
 from ..separable_conv2d import SeparableConv2d
-from ...activation import get_act
 
 
-class ResidualBlock(nn.Module):
+class ResidualBlock(ToolkitModule):
     """Residual block with optional depthwise separable convolutions and post-residual activation.
 
     This block consists of two Conv2dBNReLU layers followed by a residual connection. If the input
@@ -36,54 +38,63 @@ class ResidualBlock(nn.Module):
         NotImplementedError: If `dilation > 1` is provided.
     """
 
-    def __init__(self, in_channels,
-                 out_channels,
-                 kernel_size=3,
-                 padding=None,
-                 stride=1,
-                 dilation=1,
-                 groups=1,
-                 separable=False,
-                 zero_init_residual=False,
-                 last_act=False,
-                 norm_layer='batch',
-                 act_layer='relu'):
-        super(ResidualBlock, self).__init__()
+    def __init__(
+        self,
+        in_channels,
+        out_channels,
+        kernel_size=3,
+        padding=None,
+        stride=1,
+        dilation=1,
+        groups=1,
+        separable=False,
+        zero_init_residual=False,
+        last_act=False,
+        norm_layer="batch",
+        act_layer="relu",
+    ):
+        super().__init__()
         if padding is None:
             assert kernel_size % 2 == 1
             padding = (kernel_size - 1) // 2
         if dilation > 1:
-            raise NotImplementedError('Dilation > 1 is not supported!')
-        use_norm_layer = norm_layer not in ['none', None]
-        self.conv1 = Conv2dBNReLU(in_channels,
-                                  out_channels,
-                                  kernel_size=kernel_size,
-                                  stride=stride,
-                                  padding=padding,
-                                  bias=not use_norm_layer,
-                                  dilation=dilation,
-                                  groups=groups,
-                                  separable=separable,
-                                  norm_layer=norm_layer,
-                                  act_layer=act_layer)
-        self.conv2 = Conv2dBNReLU(out_channels,
-                                  out_channels,
-                                  kernel_size=kernel_size,
-                                  padding=padding,
-                                  bias=not use_norm_layer,
-                                  dilation=dilation,
-                                  groups=groups,
-                                  separable=separable,
-                                  norm_layer=norm_layer,
-                                  act_layer=None)
+            raise NotImplementedError("Dilation > 1 is not supported!")
+        use_norm_layer = norm_layer not in ["none", None]
+        self.conv1 = Conv2dBNReLU(
+            in_channels,
+            out_channels,
+            kernel_size=kernel_size,
+            stride=stride,
+            padding=padding,
+            bias=not use_norm_layer,
+            dilation=dilation,
+            groups=groups,
+            separable=separable,
+            norm_layer=norm_layer,
+            act_layer=act_layer,
+        )
+        self.conv2 = Conv2dBNReLU(
+            out_channels,
+            out_channels,
+            kernel_size=kernel_size,
+            padding=padding,
+            bias=not use_norm_layer,
+            dilation=dilation,
+            groups=groups,
+            separable=separable,
+            norm_layer=norm_layer,
+            act_layer=None,
+        )
 
         self.downsample = nn.Identity()
         if in_channels != out_channels or stride != 1:
-            self.downsample = nn.Conv2d(in_channels=in_channels,
-                                        out_channels=out_channels,
-                                        kernel_size=1,
-                                        stride=stride,
-                                        bias=False)
+            self.downsample = nn.Conv2d(
+                in_channels=in_channels,
+                out_channels=out_channels,
+                kernel_size=1,
+                stride=stride,
+                bias=False,
+            )
 
         if zero_init_residual:
             if use_norm_layer:
