@@ -47,7 +47,7 @@ class CopySrcCode:
         self.exclude_patterns = exclude_patterns
 
     @staticmethod
-    def dump_src(
+    def _dump_src(
         src_folder: str,
         output_folder: str,
         file_extensions: List[str],
@@ -75,8 +75,12 @@ class CopySrcCode:
 
             shutil.copyfile(in_file, out_file)
 
-    def __call__(self) -> None:
-        """Execute the copy operation."""
-        self.dump_src(
+    def dump_src(self) -> None:
+        return self._dump_src(
             self.src_folder, self.output_folder, self.file_extensions, self.exclude_patterns
         )
+
+    def __call__(self) -> None:
+        """Execute the copy operation."""
+        return self.dump_src()
+
