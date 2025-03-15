@@ -23,7 +23,8 @@ def _fix_img_extensions(extensions: List[str]):
 
 
 def iterate_files_with_creating_structure(
-    in_folder: str, out_folder: str, supported_extensions: List[str] | None = None
+        in_folder: str, out_folder: str, supported_extensions: List[str] | None = None,
+        use_natsort=False, use_tqdm=True
 ):
     """Iterates over files and returns files with the same folder structure.
 
@@ -33,6 +34,8 @@ def iterate_files_with_creating_structure(
         in_folder (str): Folder to iterate over.
         out_folder (str): Folder to save images.
         supported_extensions (list[str]): File extensions to include in the iteration.
+        use_tqdm (bool): Use tqdm to display progress bar.
+        use_natsort (bool): Use natsort to sort files.
 
     Yields:
         Iterator[tuple[str, str]]: An iterator yielding tuples of (filepath, output_path).
@@ -46,7 +49,11 @@ def iterate_files_with_creating_structure(
     if supported_extensions is not None:
         supported_extensions = _fix_img_extensions(supported_extensions)
 
-    files = in_folder.rglob(pattern="*")
+    files = tuple(in_folder.rglob(pattern="*"))
+    if use_natsort:
+        files = natsorted(files)
+    if use_tqdm:
+        files = tqdm(files)
 
     for file_path in tqdm(natsorted(files)):
         if not file_path.is_file():
@@ -62,12 +69,17 @@ def iterate_files_with_creating_structure(
         yield (file_path, new_path)
 
 
-def iterate_files_recursively(in_folder, supported_extensions: List[str] | None = None):
+def iterate_files_recursively(in_folder, supported_extensions: List[str] | None = None,
+                              use_natsort=False, use_tqdm=True):
     in_folder = Path(in_folder)
-    files = in_folder.rglob(pattern="*")
+    files = tuple(in_folder.rglob(pattern="*"))
     if supported_extensions is not None:
         supported_extensions = _fix_img_extensions(supported_extensions)
-    for file_path in tqdm(natsorted(files)):
+    if use_natsort:
+        files = natsorted(files)
+    if use_tqdm:
+        files = tqdm(files)
+    for file_path in files:
         if not file_path.is_file():
             continue
         if supported_extensions is not None:
