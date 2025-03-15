@@ -2,7 +2,7 @@ from typing import Tuple, Union
 
 import torch
 
-from dl_toolkit.utils.distribution import DiagonalGaussianDistribution
+from dl_toolkit.modules.utils.distribution import DiagonalGaussianDistribution
 from dl_toolkit.modules.toolkit_module import ToolkitModule
 
 

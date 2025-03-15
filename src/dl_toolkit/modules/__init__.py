@@ -1,4 +1,3 @@
-from . import losses
-from .utils.init_utils import init_weights, init_net
+from . import losses, utils, feature_extractors
 
-__all__ = ['losses', 'init_weights', 'init_net']
+__all__ = ['losses', 'utils', 'feature_extractors']
