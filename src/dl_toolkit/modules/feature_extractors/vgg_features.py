@@ -71,6 +71,11 @@ class VGGFeatures(ToolkitModule):
         self.perception = self._get_perception(network, layers)
 
         # Make normalization of features
+        if network not in NETWORKS_CONFIGS:
+            raise ValueError(
+                f"Unknown network {network}. "
+                f"Allowed networks: {list(NETWORKS_CONFIGS.keys())}"
+            )
         model_config = NETWORKS_CONFIGS[network]
         self.register_buffer("mean", torch.tensor(model_config.mean).view(1, -1, 1, 1))
         self.register_buffer("std", torch.tensor(model_config.std).view(1, -1, 1, 1))
@@ -147,4 +152,4 @@ class VGGFeatures(ToolkitModule):
         )
 
 
-__all__ = ["VGGFeatures"]
+__all__ = ["VGGFeatures", "PaddingType"]

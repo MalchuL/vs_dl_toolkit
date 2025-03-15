@@ -1,5 +1,12 @@
+from .classification.focal_loss import FocalLoss
 from .distribution.kl_div_loss import KLDivergenceLoss
-from .regression.charbonnier_loss import CharbonnierLoss
-from .regression.t_clip_loss import TClipLoss
+from .regression import CharbonnierLoss, TClipLoss
+from .gan import GANLoss
+from .image import TVLoss, StructureLoss, PerceptualLoss, PerceptualLossSimple
 
-__all__ = ["CharbonnierLoss", "KLDivergenceLoss", "TClipLoss"]
+from .loss_wrapper import LossWrapper
+from .identity_loss import IdentityLoss
+
+__all__ = ["FocalLoss", "KLDivergenceLoss", "CharbonnierLoss", "TClipLoss",
+           "GANLoss", "TVLoss", "StructureLoss", "PerceptualLoss", "PerceptualLossSimple",
+           "LossWrapper", "IdentityLoss"]
