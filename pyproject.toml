@@ -1,6 +1,6 @@
 [project]
 name = "dl-toolkit"
-version = "0.2.2"
+version = "0.2.3"
 description = "Personal DL toolkit to build effective models"
 readme = "README.md"
 authors = [

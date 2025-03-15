@@ -1,3 +1,5 @@
+from typing import Optional
+
 from torch import nn
 
 from ...toolkit_module import ToolkitModule
@@ -29,15 +31,15 @@ class Conv2dBNReLU(ToolkitModule):
         norm_layer (str, optional): Type of normalization layer (e.g., 'batch', 'instance'). Defaults to 'batch'.
         act_layer (str, optional): Type of activation function (e.g., 'relu', 'leaky_relu'). Defaults to 'relu'.
     """
-    VERSION = "2.0.0"
+    VERSION = "3.0.0"
 
     def __init__(
         self,
         in_channels: int,
         out_channels: int,
-        kernel_size: int,
+        kernel_size: int = 3,
         stride: int = 1,
-        padding: int = 0,
+        padding: Optional[int] = None,
         dilation: int = 1,
         groups: int = 1,
         bias: bool = BIAS,
@@ -52,6 +54,8 @@ class Conv2dBNReLU(ToolkitModule):
         self.out_channels = out_channels
         self.kernel_size = kernel_size
         self.stride = stride
+        if padding is None:
+            padding = kernel_size // 2
         self.padding = padding
         self.bias = bias
         self.padding_mode = padding_mode
