@@ -1,15 +1,17 @@
+from torch import nn
 from torch.nn import init
 
 
 # TODO replace with code like https://github.com/open-mmlab/mmengine/blob/41fa84a9a922f19955ebb4265ec19ad10ee89991/mmengine/model/weight_init.py#L620
 def init_weights(
-    net, init_type="kaiming_uniform", gain: float | None = None, nonlinearity="linear"
+        net: nn.Module, init_type: str = "kaiming_uniform", gain: float | None = None,
+        nonlinearity="linear"
 ):
     def init_func(m):
         classname = m.__class__.__name__
         gain_value = gain
         if hasattr(m, "weight") and (
-            classname.find("Conv") != -1 or classname.find("Linear") != -1
+                classname.find("Conv") != -1 or classname.find("Linear") != -1
         ):
             if init_type == "normal":
                 if gain_value is None:
@@ -59,9 +61,9 @@ def init_weights(
             if hasattr(m, "bias") and m.bias is not None:
                 init.constant_(m.bias.data, 0.0)
         elif (
-            (classname.find("BatchNorm2d") != -1 or classname.find("GroupNorm") != -1)
-            and hasattr(m, "weight")
-            and m.weight is not None
+                (classname.find("BatchNorm2d") != -1 or classname.find("GroupNorm") != -1)
+                and hasattr(m, "weight")
+                and m.weight is not None
         ):
             init.constant_(m.weight.data, 1.0)
             init.constant_(m.bias.data, 0.0)
@@ -70,7 +72,7 @@ def init_weights(
     net.apply(init_func)
 
 
-def init_net(net, init_type=None, init_gain=0.02):
+def init_net(net: nn.Module, init_type: str, init_gain=None):
     if init_type is None:
         return net
     init_weights(net, init_type, gain=init_gain)
