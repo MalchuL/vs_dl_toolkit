@@ -70,7 +70,7 @@ def init_weights(
     net.apply(init_func)
 
 
-def init_net(net, init_type, init_gain=0.02):
+def init_net(net, init_type=None, init_gain=0.02):
     if init_type is None:
         return net
     init_weights(net, init_type, gain=init_gain)
