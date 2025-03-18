@@ -1,3 +1,4 @@
+import torch
 from torch import nn
 from torch.nn import init
 
@@ -5,8 +6,7 @@ from torch.nn import init
 # TODO replace with code like https://github.com/open-mmlab/mmengine/blob/41fa84a9a922f19955ebb4265ec19ad10ee89991/mmengine/model/weight_init.py#L620
 def init_weights(
         net: nn.Module, init_type: str = "kaiming_uniform", gain: float | None = None,
-        nonlinearity="linear"
-):
+        nonlinearity="linear", generator: torch.Generator | None = None):
     def init_func(m):
         classname = m.__class__.__name__
         gain_value = gain
@@ -16,36 +16,38 @@ def init_weights(
             if init_type == "normal":
                 if gain_value is None:
                     raise ValueError("Must provide gain if init_type is 'uniform'.")
-                init.normal_(m.weight.data, 0, 0.1)
+                init.normal_(m.weight.data, 0, 0.1, generator=generator)
                 m.weight.data.clamp_(-1, 1).mul_(gain_value)
             elif init_type == "uniform":
                 if gain_value is None:
                     raise ValueError("Must provide gain if init_type is 'uniform'.")
                 # You can convert to it from normal distribution by gain = normal_gain * sqrt(12)
-                init.uniform_(m.weight.data, a=-gain_value, b=gain_value)
+                init.uniform_(m.weight.data, a=-gain_value, b=gain_value, generator=generator)
             elif init_type == "xavier_normal":
                 if gain_value is None:
                     gain_value = 1.0
                 # TODO add weight clipping
-                init.xavier_normal_(m.weight.data, gain=gain_value)
+                init.xavier_normal_(m.weight.data, gain=gain_value, generator=generator)
             elif init_type == "xavier_uniform":
                 if gain_value is None:
                     gain_value = 1.0
-                init.xavier_uniform_(m.weight.data, gain=gain_value)
+                init.xavier_uniform_(m.weight.data, gain=gain_value, generator=generator)
             elif init_type == "kaiming_normal":
                 if gain_value is None:
                     gain_value = 0.0
                 # gain converts to = math.sqrt(2.0 / (1 + gain ** 2))
                 # TODO add weight clipping
                 init.kaiming_normal_(
-                    m.weight.data, a=gain_value, mode="fan_in", nonlinearity=nonlinearity
+                    m.weight.data, a=gain_value, mode="fan_in", nonlinearity=nonlinearity,
+                    generator=generator
                 )
             elif init_type == "kaiming_uniform":
                 if gain_value is None:
                     gain_value = 0.0
                 # gain converts to = math.sqrt(2.0 / (1 + gain ** 2))
                 init.kaiming_uniform_(
-                    m.weight.data, a=gain_value, mode="fan_in", nonlinearity=nonlinearity
+                    m.weight.data, a=gain_value, mode="fan_in", nonlinearity=nonlinearity,
+                    generator=generator
                 )
             elif init_type == "zeros":
                 init.zeros_(m.weight.data)
@@ -53,7 +55,7 @@ def init_weights(
                 # https://hjweide.github.io/orthogonal-initialization-in-convolutional-layers
                 if gain_value is None:
                     gain_value = 1.0
-                init.orthogonal_(m.weight.data, gain=gain_value)
+                init.orthogonal_(m.weight.data, gain=gain_value, generator=generator)
             else:
                 raise NotImplementedError(
                     "initialization method [%s] is not implemented" % init_type
@@ -72,7 +74,8 @@ def init_weights(
     net.apply(init_func)
 
 
-def init_net(net: nn.Module, init_type: str, init_gain=None):
+def init_net(net: nn.Module, init_type: str, init_gain: float | None = None,
+             generator: torch.Generator | None = None):
     if init_type is None:
         return net
-    init_weights(net, init_type, gain=init_gain)
+    init_weights(net, init_type, gain=init_gain, generator=generator)
