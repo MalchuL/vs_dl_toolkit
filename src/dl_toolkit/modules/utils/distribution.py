@@ -1,3 +1,5 @@
+from typing import Sequence
+
 import numpy as np
 import torch
 
@@ -24,7 +26,7 @@ class DiracDistribution(AbstractDistribution):
 class DiagonalGaussianDistribution(AbstractDistribution):
     def __init__(self, parameters, deterministic=False, generator=None):
         self.parameters = parameters
-        if isinstance(parameters, (tuple, list)):
+        if isinstance(parameters, Sequence):
             self.mean, self.logvar = parameters
         else:
             self.mean, self.logvar = torch.chunk(parameters, 2, dim=1)

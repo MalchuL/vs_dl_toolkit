@@ -52,7 +52,7 @@ class LossWrapper(ToolkitModule):
         if self.weight > 0 and warmup_weight > 0:
             loss = self.loss(*args, **kwargs)
             multiplier = self.weight * warmup_weight
-            if isinstance(loss, (tuple, Sequence, Mapping)):
+            if isinstance(loss, (Sequence, Mapping)):
                 # Make editable copy
                 if isinstance(loss, Mapping):
                     outputs = dict(**loss)

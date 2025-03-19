@@ -1,8 +1,9 @@
 import pytest
 import torch
+from torch import nn
 from torch.nn import BCELoss, BCEWithLogitsLoss
 
-from dl_toolkit.modules.losses.gan.gan_loss import GANLoss
+from dl_toolkit.modules.losses.gan.gan_loss import GANLoss, SoftPlusGANLoss
 from dl_toolkit.modules.utils.math import logit
 
 
@@ -13,14 +14,14 @@ def input_tensor():
 
 # Test initialization of GANLoss
 @pytest.mark.parametrize(
-    "clip, is_logit, expected_min, expected_max",
+    "clip, is_logit, expected_min, expected_max, criterion",
     [
-        (0.2, False, 0.2, 0.8),
-        (0.3, True, logit(torch.tensor(0.3)).item(), logit(torch.tensor(0.7)).item()),
+        (0.2, False, 0.2, 0.8, nn.BCELoss()),
+        (0.3, True, logit(torch.tensor(0.3)).item(), logit(torch.tensor(0.7)).item(), nn.BCEWithLogitsLoss()),
     ],
 )
-def test_gan_loss_init(clip, is_logit, expected_min, expected_max):
-    gan_loss = GANLoss(clip=clip, is_logit=is_logit)
+def test_gan_loss_init(clip, is_logit, expected_min, expected_max, criterion):
+    gan_loss = GANLoss(clip=clip, is_logit=is_logit, criterion=criterion)
     assert gan_loss.use_clip
     assert gan_loss.clip_min == pytest.approx(expected_min, abs=1e-4)
     assert gan_loss.clip_max == pytest.approx(expected_max, abs=1e-4)
@@ -43,14 +44,14 @@ def test_get_target_tensor(input_tensor, target_is_real):
 
 # Test tensor clipping functionality
 @pytest.mark.parametrize(
-    "is_logit, clip, input_vals, expected_vals",
+    "is_logit, clip, input_vals, expected_vals, criterion",
     [
-        (False, 0.2, [0.1, 0.3, 0.9], [0.2, 0.3, 0.8]),
-        (True, 0.1, [logit(0.05), logit(0.5), logit(0.95)], [logit(0.1), logit(0.5), logit(0.9)]),
+        (False, 0.2, [0.1, 0.3, 0.9], [0.2, 0.3, 0.8], nn.BCELoss()),
+        (True, 0.1, [logit(0.05), logit(0.5), logit(0.95)], [logit(0.1), logit(0.5), logit(0.9)], nn.BCEWithLogitsLoss()),
     ],
 )
-def test_clip_tensor(is_logit, clip, input_vals, expected_vals):
-    gan_loss = GANLoss(clip=clip, is_logit=is_logit)
+def test_clip_tensor(is_logit, clip, input_vals, expected_vals, criterion):
+    gan_loss = GANLoss(clip=clip, is_logit=is_logit, criterion=criterion)
     input_tensor = torch.tensor(input_vals)
     clipped = gan_loss.clip_tensor(input_tensor)
     expected = torch.tensor(expected_vals)
@@ -64,20 +65,20 @@ def test_clip_tensor(is_logit, clip, input_vals, expected_vals):
         (BCELoss(), False, None, [1.0], True, 0.0),
         (BCELoss(), False, 0.1, [0.0], True, BCELoss()(torch.tensor([0.1]), torch.tensor([1.0]))),
         (
-            BCEWithLogitsLoss(),
-            True,
-            0.2,
-            [2.0],
-            True,
-            BCEWithLogitsLoss()(torch.tensor([logit(0.8)]), torch.tensor([1.0])),
+                BCEWithLogitsLoss(),
+                True,
+                0.2,
+                [2.0],
+                True,
+                BCEWithLogitsLoss()(torch.tensor([logit(0.8)]), torch.tensor([1.0])),
         ),
         (
-            BCELoss(),
-            False,
-            None,
-            [0.4],
-            False,
-            BCELoss()(torch.tensor([0.4]), torch.tensor([0.0])),
+                BCELoss(),
+                False,
+                None,
+                [0.4],
+                False,
+                BCELoss()(torch.tensor([0.4]), torch.tensor([0.0])),
         ),
     ],
 )
@@ -89,10 +90,18 @@ def test_forward_pass(criterion, is_logit, clip, pred, target_is_real, expected)
     assert loss.item() == pytest.approx(expected_loss, abs=1e-4)
 
 
+def test_softplus_loss():
+    gan_loss = SoftPlusGANLoss(is_logit=True)
+    pred_tensor_base = torch.tensor(0.5, dtype=torch.float32)
+    pred_tensor_better = torch.tensor(4, dtype=torch.float32)
+    assert gan_loss(pred_tensor_base, True) > gan_loss(pred_tensor_better, True)
+    assert gan_loss(pred_tensor_base, False) < gan_loss(pred_tensor_better, False)
+
+
 # Test string representation
 def test_extra_repr():
     # Test with clipping
-    gan_loss = GANLoss(clip=0.2, is_logit=False)
+    gan_loss = GANLoss(clip=0.2, is_logit=False, criterion=nn.BCELoss())
     assert "is_logit=False" in gan_loss.extra_repr()
     assert "clip=(0.20, 0.80)" in gan_loss.extra_repr()
 
