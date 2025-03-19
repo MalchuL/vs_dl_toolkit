@@ -1,3 +1,4 @@
+from collections.abc import Sequence, Mapping
 from typing import Iterable
 
 import torch
@@ -11,11 +12,11 @@ class LossWrapper(ToolkitModule):
     VERSION = "1.0.0"
 
     def __init__(
-        self,
-        loss: nn.Module,
-        weight: float = 1.0,
-        interpolator: AbstractInterpolator | None = None,
-        loss_output_ids: Iterable[int | str] = (0,),
+            self,
+            loss: nn.Module,
+            weight: float = 1.0,
+            interpolator: AbstractInterpolator | None = None,
+            loss_output_ids: Iterable[int | str] = (0,),
     ):
         """
         Loss wrapper to make it more stable and generic for training.
@@ -51,12 +52,14 @@ class LossWrapper(ToolkitModule):
         if self.weight > 0 and warmup_weight > 0:
             loss = self.loss(*args, **kwargs)
             multiplier = self.weight * warmup_weight
-            if isinstance(loss, (tuple, list, dict)):
+            if isinstance(loss, (tuple, Sequence, Mapping)):
                 # Make editable copy
-                if isinstance(loss, dict):
-                    outputs = loss.copy()
-                else:
+                if isinstance(loss, Mapping):
+                    outputs = dict(**loss)
+                elif isinstance(loss, Sequence):
                     outputs = list(loss)
+                else:
+                    raise TypeError("Loss is not a tuple, sequence or mapping.")
 
                 for mul_id in self.loss_output_ids:
                     outputs[mul_id] = outputs[mul_id] * multiplier

@@ -70,7 +70,6 @@ def init_weights(
             init.constant_(m.weight.data, 1.0)
             init.constant_(m.bias.data, 0.0)
 
-    print("initialize network with %s" % init_type)
     net.apply(init_func)
 
 
