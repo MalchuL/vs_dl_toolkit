@@ -1,1 +1,1 @@
-from .gan_loss import GANLoss, SoftPlusGANLoss
+from .gan_loss import GANLoss, SoftplusGANLoss

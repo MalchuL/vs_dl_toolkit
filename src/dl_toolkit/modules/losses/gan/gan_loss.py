@@ -3,12 +3,14 @@ from typing import Tuple
 import torch
 import torch.nn as nn
 
+from dl_toolkit.modules.losses.utils.reduction import reduce_data
 from dl_toolkit.modules.toolkit_module import ToolkitModule
 from dl_toolkit.modules.utils.math import logit
 
 
 class GANLoss(ToolkitModule):
     VERSION = "1.0.1"
+
     def __init__(
             self, criterion: nn.Module = nn.BCEWithLogitsLoss(), is_logit: bool = True,
             clip: float | None = None
@@ -58,22 +60,24 @@ class GANLoss(ToolkitModule):
         return f"is_logit={self.is_logit}, clip=({self.clip_min:.2f}, {self.clip_max:.2f})"
 
 
-class SoftPlusGANLoss(GANLoss):
-    VERSION = "1.0.0"
+class SoftplusGANLoss(GANLoss):
+    VERSION = "1.0.1"
 
     """
     Loss function for Generative Adversarial Networks proposed by Goodfellow et al (2014)
     Look at https://arxiv.org/pdf/1406.2661 Section 3, train to maximize log(D(G(z))). This version
     of loss used in current implementation of StyleGAN2.
     """
+
     #
-    def __init__(self, is_logit=True, clip: float | None = None):
+    def __init__(self, is_logit=True, clip: float | None = None, reduction="mean"):
         if not is_logit:
             raise ValueError("SoftPlusGANLoss should be used with logit=True")
+        self.reduction = reduction
         super().__init__(nn.Softplus(), is_logit=is_logit, clip=clip)
 
     def forward(self, pred, target_is_real):
         if self.use_clip:
             pred = self.clip_tensor(pred)
         multiplier = -1.0 if target_is_real else 1.0
-        return self.base_loss(multiplier * pred)
+        return reduce_data(self.base_loss(multiplier * pred), reduction=self.reduction)

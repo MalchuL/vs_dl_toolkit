@@ -3,7 +3,7 @@ import torch
 from torch import nn
 from torch.nn import BCELoss, BCEWithLogitsLoss
 
-from dl_toolkit.modules.losses.gan.gan_loss import GANLoss, SoftPlusGANLoss
+from dl_toolkit.modules.losses.gan.gan_loss import GANLoss, SoftplusGANLoss
 from dl_toolkit.modules.utils.math import logit
 
 
@@ -91,11 +91,13 @@ def test_forward_pass(criterion, is_logit, clip, pred, target_is_real, expected)
 
 
 def test_softplus_loss():
-    gan_loss = SoftPlusGANLoss(is_logit=True)
+    gan_loss = SoftplusGANLoss(is_logit=True)
     pred_tensor_base = torch.tensor(0.5, dtype=torch.float32)
     pred_tensor_better = torch.tensor(4, dtype=torch.float32)
     assert gan_loss(pred_tensor_base, True) > gan_loss(pred_tensor_better, True)
     assert gan_loss(pred_tensor_base, False) < gan_loss(pred_tensor_better, False)
+
+    assert gan_loss(torch.zeros([3,4,5]), True).shape == ()
 
 
 # Test string representation
