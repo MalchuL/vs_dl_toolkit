@@ -89,14 +89,14 @@ def test_interpolator_application(single_output_loss, linear_interpolator):
     # Step 1
     for _ in range(2):
         loss_value = wrapper()
-    expected = 2.0 * (1 / 10)  # Linear interpolation at step 1
+    expected = 2.0 * (2 / 10)  # Linear interpolation at step 1
     assert loss_value == pytest.approx(expected)
-    assert wrapper.num_steps.item() == 2
+    assert wrapper.num_steps == 2
 
     # Step 10
     for _ in range(8):
         wrapper()
-    assert wrapper.num_steps.item() == 10
+    assert wrapper.num_steps == 10
     loss_value = wrapper()
     expected = 2.0 * 1.0  # Linear interpolation at step 10
     assert loss_value.item() == pytest.approx(expected)
@@ -109,6 +109,10 @@ def test_multi_output_scaling(multi_output_loss):
     assert isinstance(loss_values, tuple)
     assert loss_values[0].item() == pytest.approx(2.0)  # 1.0 * 2.0
     assert loss_values[1].item() == pytest.approx(4.0)  # 2.0 * 2.0
+
+    assert wrapper.num_steps > 0
+    wrapper.reset()
+    assert wrapper.num_steps == 0
 
 
 def test_multi_output_dict_scaling(multi_output_dict_loss):
@@ -158,15 +162,22 @@ def test_multi_interpolator(single_output_loss, multi_interpolator):
     # Step 1 (first interpolator)
     for _ in range(2):
         loss_value = wrapper()
-    expected = 2.0 * (1 / 5)  # Linear interpolation at step 1
+        # Must be equal to single_output_loss
+        assert wrapper.denorm_loss(loss_value) == pytest.approx(1.0)
+    expected = 2.0 * (2 / 5)  # Linear interpolation at step 1
     assert loss_value == pytest.approx(expected)
 
-    # Step 6 (second interpolator)
+    # Step 6 (second interpolator, decreasing)
     for _ in range(5):
-        wrapper()
+        loss_value = wrapper()
+        # Must be equal to single_output_loss
+        assert wrapper.denorm_loss(loss_value) == pytest.approx(1.0)
     loss_value = wrapper()
-    expected = 2.0 * (3 / 5)  # Linear interpolation at step 6
+    expected = 2.0 * (2 / 5)  # Linear interpolation at step 6
     assert loss_value == pytest.approx(expected)
+    for _ in range(20):
+        wrapper()
+    assert wrapper() == pytest.approx(0)
 
 
 def test_invalid_interpolator_method():
@@ -186,6 +197,6 @@ def test_dtype_for_zero(single_output_loss):
     wrapper.train()
     wrapper.to(torch.float16)
     loss_value = wrapper()
-    assert wrapper.num_steps.dtype == torch.long  # Step counter should be long
+    assert wrapper._num_steps.dtype == torch.long  # Step counter should be long
     assert loss_value.dtype == torch.float16
     assert loss_value == pytest.approx(0)  # Constant 0
