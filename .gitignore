@@ -155,5 +155,8 @@ configs/local/default.yaml
 .aim
 
 # Unused Code
-staff/
-.staff/
+stuff/
+.stuff/
+.history
+.cursor
+.kiro

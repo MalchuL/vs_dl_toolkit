@@ -1,6 +1,6 @@
 import os
 from pathlib import Path
-from typing import List
+from typing import List, Union
 
 from natsort import natsorted
 from tqdm import tqdm
@@ -23,7 +23,8 @@ def _fix_img_extensions(extensions: List[str]):
 
 
 def iterate_files_with_creating_structure(
-        in_folder: str, out_folder: str, supported_extensions: List[str] | None = None,
+        in_folder: Union[str, Path], out_folder: Union[str, Path],
+        supported_extensions: List[str] | None = None,
         use_natsort=False, use_tqdm=True
 ):
     """Iterates over files and returns files with the same folder structure.
@@ -51,11 +52,11 @@ def iterate_files_with_creating_structure(
 
     files = tuple(in_folder.rglob(pattern="*"))
     if use_natsort:
-        files = natsorted(files)
+        files = natsorted(map(str, files))  # type: ignore[assignment]
     if use_tqdm:
         files = tqdm(files)
 
-    for file_path in tqdm(natsorted(files)):
+    for file_path in files:
         if not file_path.is_file():
             continue
         if supported_extensions is not None:
@@ -76,7 +77,7 @@ def iterate_files_recursively(in_folder, supported_extensions: List[str] | None 
     if supported_extensions is not None:
         supported_extensions = _fix_img_extensions(supported_extensions)
     if use_natsort:
-        files = natsorted(files)
+        files = natsorted(files)  # type: ignore[assignment]
     if use_tqdm:
         files = tqdm(files)
     for file_path in files:
