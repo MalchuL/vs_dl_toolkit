@@ -56,12 +56,12 @@ class TestCopySrcCode:
 
     def test_nonexistent_source(self):
         """Test invalid source directory handling."""
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             CopySrcCode(src_folder="/invalid/path", output_folder=".")
 
     def test_empty_extensions(self):
         """Test empty file extensions validation."""
-        with pytest.raises(AssertionError):
+        with pytest.raises(ValueError):
             CopySrcCode(src_folder=".", output_folder=".", file_extensions=[])
 
     def test_directory_structure(self, tmpdir):

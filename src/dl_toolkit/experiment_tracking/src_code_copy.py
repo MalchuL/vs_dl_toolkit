@@ -2,7 +2,7 @@ import fnmatch
 import os
 import shutil
 from pathlib import Path
-from typing import List, Optional
+from typing import List, Optional, Union
 
 from dl_toolkit.utils.path_utils import iterate_files_with_creating_structure
 
@@ -19,7 +19,8 @@ class CopySrcCode:
         src_folder (str): Source directory to copy from
         output_folder (str): Destination directory to copy to
         file_extensions (List[str]): Allowed file extensions (e.g. ['.py', '.txt'])
-        exclude_patterns (Optional[List[str]]): Unix-style exclusion patterns
+        exclude_patterns (Optional[List[str]]): Unix-style exclusion patterns,
+        e.g. ['*__init__.py', '*.pyc']
 
     Attributes:
         src_folder (str): Configured source directory path
@@ -28,28 +29,38 @@ class CopySrcCode:
         exclude_patterns (List[str]): Active exclusion patterns
     """
 
+    DEFAULT_FILE_EXTENSIONS: List[str] = [".py"]
+    DEFAULT_EXCLUDE_PATTERNS: List[str] = []
+    
     def __init__(
         self,
-        src_folder: str,
-        output_folder: str,
-        file_extensions: Optional[List[str]] = (".py",),
-        exclude_patterns: Optional[List[str]] = ("*__init__.py",),
+        src_folder: Union[str, Path],
+        output_folder: Union[str, Path],
+        file_extensions: Optional[List[str]] = None,
+        exclude_patterns: Optional[List[str]] = None,
     ):
         """Initialize copier with validation checks."""
-        assert os.path.isdir(src_folder) and os.path.exists(src_folder), "Source folder must exist"
-        self.src_folder = src_folder
-        self.output_folder = output_folder or "."
+        self.src_folder = Path(src_folder)
+        self.output_folder = Path(output_folder)
 
-        assert (
-            file_extensions is not None and len(file_extensions) > 0
-        ), "At least one file extension required"
+        if not self.src_folder.is_dir() or not self.src_folder.exists():
+            raise ValueError("Source folder must exist")
+
+        if file_extensions is not None and len(file_extensions) == 0:
+            raise ValueError("File extensions cannot be empty")
+        elif file_extensions is None:
+            file_extensions = self.DEFAULT_FILE_EXTENSIONS
+
+        if exclude_patterns is None:
+            exclude_patterns = self.DEFAULT_EXCLUDE_PATTERNS
+
         self.file_extensions = file_extensions
         self.exclude_patterns = exclude_patterns
 
     @staticmethod
     def _dump_src(
-        src_folder: str,
-        output_folder: str,
+        src_folder: Path,
+        output_folder: Path,
         file_extensions: List[str],
         exclude_patterns: Optional[List[str]],
     ) -> None:
@@ -67,7 +78,7 @@ class CopySrcCode:
         for in_file, out_file in iterate_files_with_creating_structure(
             src_folder, output_folder, supported_extensions=file_extensions
         ):
-            relative_path = os.path.relpath(in_file, src_folder)
+            relative_path = in_file.relative_to(src_folder)
 
             if exclude_patterns:
                 if any(fnmatch.fnmatch(relative_path, p) for p in exclude_patterns):
@@ -76,11 +87,28 @@ class CopySrcCode:
             shutil.copyfile(in_file, out_file)
 
     def dump_src(self) -> None:
-        return self._dump_src(
-            self.src_folder, self.output_folder, self.file_extensions, self.exclude_patterns
+        """Copy source code to output folder.
+
+        Copies files from source directory to destination while:
+        - Maintaining directory structure
+        - Filtering by file extensions
+        - Excluding files matching specified patterns
+
+        Args:
+            src_folder: Source directory to copy from
+            output_folder: Destination directory to copy to
+            file_extensions: Allowed file extensions
+            exclude_patterns: Exclusion patterns (fnmatch format)
+        """
+        self._dump_src(
+            self.src_folder, self.output_folder, 
+            self.file_extensions, self.exclude_patterns
         )
 
     def __call__(self) -> None:
-        """Execute the copy operation."""
-        return self.dump_src()
+        """Execute the copy operation.
+
+        This is a convenience method that calls dump_src().
+        """
+        self.dump_src()
 

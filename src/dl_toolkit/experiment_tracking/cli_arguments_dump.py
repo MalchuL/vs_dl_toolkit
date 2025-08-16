@@ -1,6 +1,7 @@
 import os
 import sys
 from pathlib import Path
+from typing import Union
 
 
 class CLIArgumentsDumper:
@@ -10,19 +11,19 @@ class CLIArgumentsDumper:
     the current process, including CUDA device configuration.
 
     Args:
-        output_path (str): Full path for the output script file
+        output_path (Union[str, Path]): Full path for the output script file
 
     Attributes:
-        output_path (str): Configured output file location
+        output_path (Path): Configured output file location
     """
 
-    def __init__(self, output_path: str):
+    def __init__(self, output_path: Union[str, Path]):
         """Initialize dumper with output location.
 
         Args:
             output_path: Full filesystem path for the output script
         """
-        self.output_path = output_path
+        self.output_path = Path(output_path)
 
     def _get_additional_args(self):
         running_script = ""
@@ -40,8 +41,8 @@ class CLIArgumentsDumper:
         command_prefix = self._get_additional_args()
         full_command = f"{command_prefix}python {' '.join(sys.argv)}"
 
-        Path(self.output_path).parent.mkdir(parents=True, exist_ok=True)
-        with open(self.output_path, "w") as f:
+        self.output_path.parent.mkdir(parents=True, exist_ok=True)
+        with self.output_path.open("w") as f:
             f.write(full_command)
 
     def __call__(self) -> None:
