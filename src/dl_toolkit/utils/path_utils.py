@@ -8,7 +8,7 @@ from tqdm import tqdm
 IMG_EXTENSIONS = (".jpg", ".jpeg", ".png", ".ppm", ".bmp")
 
 
-def _fix_img_extensions(extensions: List[str]):
+def _fix_extensions(extensions: List[str]) -> List[str]:
     """Fixes image extensions"""
     if len(extensions) == 0:
         raise ValueError("Extensions cannot be empty")
@@ -32,8 +32,8 @@ def iterate_files_with_creating_structure(
     Output folders are created automatically.
 
     Args:
-        in_folder (str): Folder to iterate over.
-        out_folder (str): Folder to save images.
+        in_folder (str | Path): Folder to iterate over.
+        out_folder (str | Path): Folder to save images.
         supported_extensions (list[str]): File extensions to include in the iteration.
         use_tqdm (bool): Use tqdm to display progress bar.
         use_natsort (bool): Use natsort to sort files.
@@ -48,7 +48,7 @@ def iterate_files_with_creating_structure(
         os.makedirs(out_folder, exist_ok=True)
 
     if supported_extensions is not None:
-        supported_extensions = _fix_img_extensions(supported_extensions)
+        supported_extensions = _fix_extensions(supported_extensions)
 
     files = tuple(in_folder.rglob(pattern="*"))
     if use_natsort:
@@ -75,7 +75,7 @@ def iterate_files_recursively(in_folder, supported_extensions: List[str] | None 
     in_folder = Path(in_folder)
     files = tuple(in_folder.rglob(pattern="*"))
     if supported_extensions is not None:
-        supported_extensions = _fix_img_extensions(supported_extensions)
+        supported_extensions = _fix_extensions(supported_extensions)
     if use_natsort:
         files = natsorted(files)  # type: ignore[assignment]
     if use_tqdm:
