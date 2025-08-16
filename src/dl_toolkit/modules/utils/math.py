@@ -1,11 +1,19 @@
 import math
-from typing import Iterable, Sequence
+from typing import Iterable
 
 import numpy as np
 import torch
 
 
-def logit(value: Iterable[float] | float | torch.Tensor | np.ndarray):
+def logit(value: Iterable[float] | float | torch.Tensor | np.ndarray) -> Iterable[float] | float | torch.Tensor | np.ndarray:
+    """Logit function.
+
+    Args:
+        value (Iterable[float] | float | torch.Tensor | np.ndarray): Value to apply logit function.
+
+    Returns:
+        Iterable[float] | float | torch.Tensor | np.ndarray: Logit of the value.
+    """
     if isinstance(value, torch.Tensor):
         return torch.logit(value)
     elif isinstance(value, np.ndarray):
