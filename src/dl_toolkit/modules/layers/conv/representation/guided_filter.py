@@ -85,7 +85,9 @@ class GuidedFilter(ToolkitModule):
         if y.shape != x.shape:
             raise RuntimeError("Input and guidance images must have same shape")
 
-        N = self.box_filter(torch.ones(1, 1, H, W, dtype=x.dtype, device=x.device), channels=1)
+        N = self.box_filter(torch.ones(1, 1, H, W, # type: ignore[arg-type, assignment]
+                                       dtype=x.dtype, 
+                                       device=x.device), channels=1)  
         mean_x = self.box_filter(x) / N
         mean_y = self.box_filter(y) / N
 
@@ -100,7 +102,8 @@ class GuidedFilter(ToolkitModule):
 
         return mean_A * x + mean_b
 
-    def get_num_channels(self) -> int:
+    @property
+    def channels(self) -> int:
         """Get number of output channels.
 
         Returns:

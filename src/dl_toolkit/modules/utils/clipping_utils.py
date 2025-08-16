@@ -5,7 +5,7 @@ import torch
 
 def z_clip(x: torch.Tensor, z_value: float, dims: Iterable[int] | None = (2, 3)):
     with torch.no_grad():
-        std, mean = torch.std_mean(x, dim=dims, keepdim=True)
+        std, mean = torch.std_mean(x, dim=dims, keepdim=True)  # type: ignore[arg-type]
         min = mean - std * z_value
         max = mean + std * z_value
     x = torch.clip(x, min=min, max=max)

@@ -102,7 +102,8 @@ class ColorShift(ToolkitModule):
             output = output.repeat(1, 3, 1, 1)
         return output
 
-    def get_num_channels(self):
+    @property
+    def channels(self):
         """Get number of output channels.
 
         Returns:
