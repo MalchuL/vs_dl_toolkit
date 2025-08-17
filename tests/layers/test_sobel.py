@@ -53,7 +53,7 @@ def test_edge_magnitude_calculation():
 
 
 def test_uniform_image():
-    sf = SobelFilter(only_edges=True)
+    sf = SobelFilter(only_edges=True, eps=0.0)
     uniform = torch.ones(1, 3, 5, 5)
     output = sf(uniform)
     # Gradients should be near zero in uniform areas

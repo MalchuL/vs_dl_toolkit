@@ -72,6 +72,6 @@ class TestColorShift:
     def test_get_num_channels(self):
         """Test channel count reporting."""
         module = ColorShift(is_repeat=True)
-        assert module.get_num_channels() == 3
+        assert module.channels == 3
         module.is_repeat = False
-        assert module.get_num_channels() == 1
+        assert module.channels == 1

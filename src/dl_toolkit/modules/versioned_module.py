@@ -4,7 +4,7 @@ import semver
 import torch.nn as nn
 
 from dl_toolkit.__version__ import __version__ as dl_toolkit_version
-from dl_toolkit.utils.errors import ModuleVersionMismatchError
+from dl_toolkit.utils.errors import ModuleVersionMismatchError, InvalidVersionError
 from dl_toolkit.utils.logging import logger
 
 
@@ -41,9 +41,8 @@ class VersionedModule(nn.Module):
     __TOOLKIT_VERSION_KEY = "__toolkit_version__"
 
     def __init__(self):
-        assert semver.Version.is_valid(
-            self.VERSION
-        ), f"Invalid version {self.VERSION} in {self.__class__.__name__}"
+        if not semver.Version.is_valid(self.VERSION):
+            raise InvalidVersionError(self.__class__.__name__, self.VERSION)
         super().__init__()
 
     def get_extra_state(self) -> Dict[str, Any]:
