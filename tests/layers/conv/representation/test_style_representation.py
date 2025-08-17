@@ -113,3 +113,4 @@ class TestStyleRepresentation:
         
         # Check if outputs are in a reasonable range
         assert out.min() >= -2 and out.max() <= 2, "Output values are in unexpected range"
+

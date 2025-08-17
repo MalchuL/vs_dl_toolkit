@@ -13,7 +13,7 @@ class MergingLossWrapper(nn.Module):
     and returns the sum of all weighted losses.
 
     Args:
-        losses (Mapping[str, nn.Module]): A dictionary mapping loss names to loss modules.
+        losses (Mapping[str, nn.Module, LossWrapper]): A dictionary mapping loss names to loss modules.
         weights (Optional[Mapping[str, float]]): A dictionary mapping loss names to weights.
             If None, all weights default to 1.0. Defaults to None.
 
@@ -24,7 +24,7 @@ class MergingLossWrapper(nn.Module):
         >>> output = loss_wrapper(predictions, targets)
     """
 
-    def __init__(self, losses: Mapping[str, nn.Module],
+    def __init__(self, losses: Mapping[str, nn.Module | LossWrapper],
                  weights: Optional[Mapping[str, float]] = None):
         """Initializes the MergingLossWrapper with the given losses and weights."""
         super().__init__()

@@ -89,7 +89,7 @@ class LossWrapper(ToolkitModule):
 
                 for mul_id in self.loss_output_ids:
                     outputs[mul_id] = outputs[mul_id] * multiplier
-                return type(loss)(outputs)  # Return same type as loss
+                return type(loss)(outputs)  # Return same type as loss, dict or list
             else:
                 return loss * multiplier
         else:

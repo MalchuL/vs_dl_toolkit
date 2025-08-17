@@ -15,6 +15,22 @@ class GANLoss(ToolkitModule):
             self, criterion: nn.Module = nn.BCEWithLogitsLoss(), is_logit: bool = True,
             clip: float | None = None
     ):
+        """GAN loss.
+        GAN loss is a loss function for Generative Adversarial Networks.
+        It is used to train the generator and discriminator.
+        It is also used to improve the quality of the generated image.
+        It is also used to improve the quality of the generated image.
+
+        Args:
+            criterion (nn.Module, optional): Criterion to use. Defaults to nn.BCEWithLogitsLoss().
+            is_logit (bool, optional): Whether to use logit. Defaults to True.
+            clip (float, optional): Clip value. Defaults to None.
+
+        Raises:
+            ValueError: If clip is not in range (0.0, 1.0).
+            ValueError: If BCELoss is used with logit=False.
+            ValueError: If BCEWithLogitsLoss is used with logit=True.
+        """
         super().__init__()
         self.register_buffer("real_label", torch.tensor(1.0))
         self.register_buffer("fake_label", torch.tensor(0.0))
@@ -69,8 +85,20 @@ class SoftplusGANLoss(GANLoss):
     of loss used in current implementation of StyleGAN2.
     """
 
-    #
     def __init__(self, is_logit=True, clip: float | None = None, reduction="mean"):
+        """SoftPlusGAN loss.
+        SoftPlusGAN loss is a loss function for Generative Adversarial Networks.
+        It is used to train the generator and discriminator.
+        It is also used to improve the quality of the generated image.
+        It is also used to improve the quality of the generated image.
+        Args:
+            is_logit (bool, optional): Whether to use logit. Defaults to True.
+            clip (float, optional): Clip value. Defaults to None.
+            reduction (str, optional): Reduction type. Defaults to "mean".
+
+        Raises:
+            ValueError: If SoftPlusGANLoss is used with logit=False.
+        """
         if not is_logit:
             raise ValueError("SoftPlusGANLoss should be used with logit=True")
         self.reduction = reduction

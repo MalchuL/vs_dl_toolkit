@@ -6,6 +6,12 @@ from dl_toolkit.modules.toolkit_module import ToolkitModule
 
 class StructureLoss(ToolkitModule):
     def __init__(self, reduction: str = "mean", eps=1e-08):
+        """Structure loss.
+        Structure loss is a regularization term that penalizes the structure of the image.
+        It is used to prevent the model from overfitting to the input data.
+        It is also used to improve the quality of the generated image.
+        It is also used to improve the quality of the generated image.
+        """
         super().__init__()
         self.reduction = reduction
         self.eps = eps

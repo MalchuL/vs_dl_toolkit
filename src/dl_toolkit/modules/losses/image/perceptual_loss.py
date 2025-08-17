@@ -22,6 +22,16 @@ def PerceptualLossSimple(
 ):
     """
     Perceptual loss for image generation. Simplified version with good parameters
+    Args:
+        model_name (str, optional): Name of the model to use. Defaults to "vgg19_bn".
+        loss_type (str, optional): Type of loss to use. Defaults to "charbonnier".
+        z_clip (float, optional): Z-clipping value. Defaults to None.
+        fix_pad (bool, optional): Whether to fix the padding. Defaults to False.
+        apply_norm (bool, optional): Whether to apply normalization. Defaults to True.
+        use_last_layers (int, optional): Number of last layers to use. Defaults to None.
+
+    Returns:
+        PerceptualLoss: Perceptual loss module.
     """
     name2layers = {"vgg16": VGG16_LAYERS, "vgg19": VGG19_LAYERS, "vgg19_bn": VGG19_BN_LAYERS}
     layers = name2layers[model_name]
@@ -54,6 +64,29 @@ class PerceptualLoss(ToolkitModule):
         padding: PaddingType = PaddingType.ZEROS,
         z_clip: float | None = None,
     ):
+        """Perceptual loss.
+        Perceptual loss is a regularization term that penalizes the perceptual difference between the generated and target images.
+        It is used to prevent the model from overfitting to the input data.
+        It is also used to improve the quality of the generated image.
+        It is also used to improve the quality of the generated image.
+        Args:
+            model_name (str, optional): Name of the model to use. Defaults to "vgg19".
+            layers (List[int], optional): Layers to use. Defaults to ().
+            apply_norm (bool, optional): Whether to apply normalization. Defaults to False.
+            loss_type (str, optional): Type of loss to use. Defaults to "smooth_l1".
+            weight_scaler (float, optional): Weight scaler. Defaults to 2.
+            reverse_weights (bool, optional): Whether to reverse the weights. Defaults to False.
+            padding (PaddingType, optional): Padding type. Defaults to PaddingType.ZEROS.
+            z_clip (float, optional): Z-clipping value. Defaults to None.
+
+        Raises:
+            AssertionError: If layers is not provided or is empty.
+            AssertionError: If apply_norm is not in [True, False, "both"].
+            AssertionError: If loss_type is not in ["l1", "smooth_l1", "l2", "charbonnier"].
+            ValueError: If model_name is not in ["vgg16", "vgg19", "vgg19_bn"].
+            ValueError: If loss_type is not in ["l1", "smooth_l1", "l2", "charbonnier"].
+            ValueError: If model_name is not in ["vgg16", "vgg19", "vgg19_bn"].
+        """
         super().__init__()
         assert (
             layers is not None and len(layers) > 0
