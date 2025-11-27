@@ -68,7 +68,7 @@ class AbstractInterpolator(ABC):
         """
 
     def alpha_interpolate(self, alpha: float) -> float:
-        return self.alpha_interpolate(round(alpha * self.num_steps))
+        return self.interpolate(round(alpha * self.num_steps))
 
     def __call__(self, step):
         return self.interpolate(step)
